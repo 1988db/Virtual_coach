@@ -10,6 +10,7 @@
 </head>
 <body>
     <div class="logo">Virtual coach</div>
+    <button class="show-planner">Open planner</button>
     <div class="main-container">                
         <div class="planner-container">
             <div class="planner-header"><h2>Set your exercises</h2></div>
@@ -24,136 +25,36 @@
                         <label for="duration">Duration</label>
                         <input name="duration" type="number">
                     </div>
-                    <div class="down-limit-input">
-                        <label for="down-limit">Down limit</label>
-                        <input name="down-limit" type="number">
-                    </div>
-                    <div class="up-limit-input">
-                        <label for="up-limit">Up limit</label>
-                        <input name="up-limit" type="number">
-                    </div>
+                    <fieldset>
+                        <legend>Limits</legend>
+                        <div class="limit-type-inputs">
+                            <div class="limit-type-input">
+                                <label for="power">Power</label>
+                                <input id="power" name="limit-type" type="radio" value="Power"></div>
+                            <div class="limit-type-input">
+                                <label for="hr">Heart rate</label>
+                                <input id="hr" name="limit-type" type="radio" value="HR">
+                            </div>
+                        </div>            
+                        <div class="down-limit-input">
+                            <label for="down-limit">Down limit</label>
+                            <input name="down-limit" type="number">
+                        </div>
+                        <div class="up-limit-input">
+                            <label for="up-limit">Up limit</label>
+                            <input name="up-limit" type="number">
+                        </div>
+                    </fieldset>
                     <div class="rest-input">
                         <label for="rest">Rest ?</label>
                         <input name="rest" type="checkbox">
                     </div>                   
-                </form>
-                <form class="add-exercise">
-                    <button class="remove-excercise-btn">X</button>
-                    <div class="duration-input">
-                        <label for="duration">Duration</label>
-                        <input name="duration" type="number">
-                    </div>
-                    <div class="down-limit-input">
-                        <label for="down-limit">Down limit</label>
-                        <input name="down-limit" type="number">
-                    </div>
-                    <div class="up-limit-input">
-                        <label for="up-limit">Up limit</label>
-                        <input name="up-limit" type="number">
-                    </div>
-                    <div class="rest-input">
-                        <label for="rest">Rest ?</label>
-                        <input name="rest" type="checkbox">
-                    </div>                   
-                </form>
-                <form class="add-exercise">
-                    <button class="remove-excercise-btn">X</button>
-                    <div class="duration-input">
-                        <label for="duration">Duration</label>
-                        <input name="duration" type="number">
-                    </div>
-                    <div class="down-limit-input">
-                        <label for="down-limit">Down limit</label>
-                        <input name="down-limit" type="number">
-                    </div>
-                    <div class="up-limit-input">
-                        <label for="up-limit">Up limit</label>
-                        <input name="up-limit" type="number">
-                    </div>
-                    <div class="rest-input">
-                        <label for="rest">Rest ?</label>
-                        <input name="rest" type="checkbox">
-                    </div>                   
-                </form>
-                <form class="add-exercise">
-                    <button class="remove-excercise-btn">X</button>
-                    <div class="duration-input">
-                        <label for="duration">Duration</label>
-                        <input name="duration" type="number">
-                    </div>
-                    <div class="down-limit-input">
-                        <label for="down-limit">Down limit</label>
-                        <input name="down-limit" type="number">
-                    </div>
-                    <div class="up-limit-input">
-                        <label for="up-limit">Up limit</label>
-                        <input name="up-limit" type="number">
-                    </div>
-                    <div class="rest-input">
-                        <label for="rest">Rest ?</label>
-                        <input name="rest" type="checkbox">
-                    </div>                   
-                </form>
-                <form class="add-exercise">
-                    <button class="remove-excercise-btn">X</button>
-                    <div class="duration-input">
-                        <label for="duration">Duration</label>
-                        <input name="duration" type="number">
-                    </div>
-                    <div class="down-limit-input">
-                        <label for="down-limit">Down limit</label>
-                        <input name="down-limit" type="number">
-                    </div>
-                    <div class="up-limit-input">
-                        <label for="up-limit">Up limit</label>
-                        <input name="up-limit" type="number">
-                    </div>
-                    <div class="rest-input">
-                        <label for="rest">Rest ?</label>
-                        <input name="rest" type="checkbox">
-                    </div>                   
-                </form>
-                <form class="add-exercise">
-                    <button class="remove-excercise-btn">X</button>
-                    <div class="duration-input">
-                        <label for="duration">Duration</label>
-                        <input name="duration" type="number">
-                    </div>
-                    <div class="down-limit-input">
-                        <label for="down-limit">Down limit</label>
-                        <input name="down-limit" type="number">
-                    </div>
-                    <div class="up-limit-input">
-                        <label for="up-limit">Up limit</label>
-                        <input name="up-limit" type="number">
-                    </div>
-                    <div class="rest-input">
-                        <label for="rest">Rest ?</label>
-                        <input name="rest" type="checkbox">
-                    </div>                   
-                </form>
-                <form class="add-exercise">
-                    <button class="remove-excercise-btn">X</button>
-                    <div class="duration-input">
-                        <label for="duration">Duration</label>
-                        <input name="duration" type="number">
-                    </div>
-                    <div class="down-limit-input">
-                        <label for="down-limit">Down limit</label>
-                        <input name="down-limit" type="number">
-                    </div>
-                    <div class="up-limit-input">
-                        <label for="up-limit">Up limit</label>
-                        <input name="up-limit" type="number">
-                    </div>
-                    <div class="rest-input">
-                        <label for="rest">Rest ?</label>
-                        <input name="rest" type="checkbox">
-                    </div>                   
-                </form>
-            </div>            
-        </div>        
-        <h2>Duration: <span id="main-timer"></span></h2>
-    </div>
+                </form>           
+          </div>
+        </div>
+        <div class="display-container">
+            <h2>Duration: <span id="main-timer"></span></h2>
+        </div>
+    </div>    
 </body>
 </html>
