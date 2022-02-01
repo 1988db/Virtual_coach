@@ -1,0 +1,9 @@
+body {
+    background-color: rgb(223, 201, 243);
+}
+
+.main-container {
+    margin: 20px auto;
+    width: 95vw;
+    text-align: center;
+}
