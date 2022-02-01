@@ -1,9 +1,66 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     background-color: rgb(223, 201, 243);
 }
 
+.logo {    
+    display: flex;
+    justify-content: flex-start;
+    background-color: black;
+    color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 20px;
+    padding-left: 10px;
+}
+
 .main-container {
     margin: 20px auto;
-    width: 95vw;
+    width: 95vw;   
+}
+
+.planner-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.planner-header {
     text-align: center;
+    margin-bottom: 15px;
+}
+.add-exercise-btn, .train-btn {
+    width: 200px;
+    height: 40px;
+}
+
+.exercises-container {
+    margin: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+
+.add-exercise {
+    width: 280px;
+    height: 150px;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    border: 1px solid;
+    margin: 0 5px 5px 0;
+}
+
+.duration-input, .down-limit-input, .up-limit-input {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 5px 0;
 }
