@@ -53,8 +53,8 @@ body {
 }
 
 .add-exercise {
-    width: 300px;
-    height: 200px;
+    width: 200px;
+    height: 290px;
     padding: 0 10px;
     display: flex;
     flex-direction: column;
@@ -75,9 +75,13 @@ fieldset {
     margin-bottom: 5px;
 }
 
-.duration-input, .down-limit-input, .up-limit-input {
+.duration-input, .down-limit-input, .up-limit-input, .down-cadence-limit-input, .up-cadence-limit-input, .notes-input {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin: 5px 0;
+}
+
+.number-input {
+    width: 50px;
 }

@@ -23,28 +23,40 @@
                     <button class="remove-excercise-btn">X</button>
                     <div class="duration-input">
                         <label for="duration">Duration</label>
-                        <input name="duration" type="number">
+                        <input class="number-input" name="duration" type="number">
                     </div>
                     <fieldset>
                         <legend>Limits</legend>
                         <div class="limit-type-inputs">
                             <div class="limit-type-input">
                                 <label for="power">Power</label>
-                                <input id="power" name="limit-type" type="radio" value="Power"></div>
+                                <input class="number-input" id="power" name="limit-type" type="radio" value="Power"></div>
                             <div class="limit-type-input">
                                 <label for="hr">Heart rate</label>
-                                <input id="hr" name="limit-type" type="radio" value="HR">
+                                <input class="number-input" id="hr" name="limit-type" type="radio" value="HR">
                             </div>
                         </div>            
                         <div class="down-limit-input">
                             <label for="down-limit">Down limit</label>
-                            <input name="down-limit" type="number">
+                            <input class="number-input" name="down-limit" type="number">
                         </div>
                         <div class="up-limit-input">
                             <label for="up-limit">Up limit</label>
-                            <input name="up-limit" type="number">
+                            <input class="number-input" name="up-limit" type="number">
                         </div>
-                    </fieldset>
+                    </fieldset>                    
+                    <div class="down-cadence-limit-input">
+                        <label for="down-cadence-limit">Down RPM limit</label>
+                        <input class="number-input" name="down-cadence-limit" type="number">
+                    </div>
+                    <div class="up-cadence-limit-input">
+                        <label for="up-cadence-limit">Up RPM limit</label>
+                        <input class="number-input" name="up-cedence-limit" type="number">
+                    </div>
+                    <div class="notes-input">
+                        <label for="notes">Notes</label>
+                        <input class="number-input" name="notes" type="text">
+                    </div>
                     <div class="rest-input">
                         <label for="rest">Rest ?</label>
                         <input name="rest" type="checkbox">
