@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
     function addExercise() {
         let exercise = new Exercise(0, true, 0, 0, 0, 0, false, '');
         training['id' + currentExerciseId] = exercise;
-        currentExerciseId++;
+        console.log(training);
         addExerciseForm(currentExerciseId); //adds exercise from
+        currentExerciseId++;        
     }
 
     function addExerciseForm(currentExerciseId) {
@@ -167,7 +168,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //remove exercise
     function removeExercise(e) {
         e.preventDefault();
-        console.log('close ' + e.target.dataset.id)
+        const formToRemove = document.querySelector('form[data-id="' + e.target.dataset.id +'"]');
+        exercisesContainer.removeChild(formToRemove);
+        delete training['id' + e.target.dataset.id];
+        console.log(training);
     }
 
     //exercise template
