@@ -75,8 +75,8 @@ fieldset {
     margin-bottom: 5px;
 }
 
-.duration-input-container, .down-limit-input-container, .up-limit-input-container,
-.down-cadence-limit-input-container, .up-cadence-limit-input-container, .notes-input-container {
+.exercise-name-input-container, .duration-input-container, .lower-limit-input-container, .upper-limit-input-container,
+.lower-cadence-limit-input-container, .upper-cadence-limit-input-container, .notes-input-container {
     display: flex;
     justify-content: space-between;
     width: 100%;
