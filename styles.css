@@ -75,7 +75,8 @@ fieldset {
     margin-bottom: 5px;
 }
 
-.duration-input, .down-limit-input, .up-limit-input, .down-cadence-limit-input, .up-cadence-limit-input, .notes-input {
+.duration-input-container, .down-limit-input-container, .up-limit-input-container,
+.down-cadence-limit-input-container, .up-cadence-limit-input-container, .notes-input-container {
     display: flex;
     justify-content: space-between;
     width: 100%;
