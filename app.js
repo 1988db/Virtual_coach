@@ -249,7 +249,15 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //render Exercises Timelines
     function renderExercisesTimelines() {
-        console.log(training)
+        //count training time
+        let trainingTime = training.reduce(function (total, current) {
+            if (current.durationUnit === 'minutes') {
+                return total + current.duration * 60;
+            } else {
+               return total + parseInt(current.duration);
+            }            
+        }, 0)
+        console.log(trainingTime);
     }
 
     //exercise template
