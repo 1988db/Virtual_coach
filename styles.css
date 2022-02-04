@@ -54,7 +54,7 @@ body {
 
 .add-exercise {
     width: 200px;
-    height: 290px;
+    height: 360px;
     padding: 0 10px;
     display: flex;
     flex-direction: column;
@@ -64,7 +64,7 @@ body {
     margin: 0 5px 5px 0;
 }
 
-.limit-type-inputs {
+.limit-type-inputs, .duration-unit-inputs {
     display: flex;
     justify-content: space-evenly;
 }
@@ -85,6 +85,14 @@ fieldset {
 
 .number-input {
     width: 50px;
+}
+
+input[name=exerciseName] {
+    width: 75px;
+}
+
+input[name=notes] {
+    width: 135px;
 }
 
 .timeline-container {

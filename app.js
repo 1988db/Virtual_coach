@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
-        let exercise = new Exercise(currentExerciseId, '', 0, true, 0, 0, 0, 0, '');
+        let exercise = new Exercise(currentExerciseId, '', 0, 'minutes', true, 0, 0, 0, 0, '');
         training.push(exercise);        
         addExerciseForm(currentExerciseId); //adds exercise from
         addExerciseTimeline(currentExerciseId); //add exercise Timeline
@@ -48,9 +48,15 @@ document.addEventListener('DOMContentLoaded', ()=> {
         exerciseNameInput.classList.add('number-input');
         exerciseNameContainer.appendChild(exerciseNameInput);
         //duration
+        const durationFieldset = document.createElement('fieldset');
+        form.appendChild(durationFieldset);
+        const durationLegend = document.createElement('legend');
+        durationLegend.innerText = 'Duration';
+        durationFieldset.appendChild(durationLegend);
+
         const durationInputContainer = document.createElement('div');
         durationInputContainer.classList.add('duration-input-container');
-        form.appendChild(durationInputContainer);
+        durationFieldset.appendChild(durationInputContainer);
         const durationLabel = document.createElement('label');
         durationLabel.setAttribute('for', 'duration');
         durationLabel.innerText = 'Duration';
@@ -61,17 +67,52 @@ document.addEventListener('DOMContentLoaded', ()=> {
         durationInput.setAttribute('id', 'duration' + currentExerciseId);
         durationInput.classList.add('number-input');
         durationInputContainer.appendChild(durationInput);
+        //duration units
+        const durationUnitsInputsContainer = document.createElement('div');
+        durationUnitsInputsContainer.classList.add('duration-units-inputs');
+        durationFieldset.appendChild(durationUnitsInputsContainer);
+        //seconds        
+        const durationSecondsUnitContainer = document.createElement('div');
+        durationSecondsUnitContainer.classList.add('duration-seconds');        
+        durationUnitsInputsContainer.appendChild(durationSecondsUnitContainer);
+        const secondsLabel = document.createElement('label');
+        secondsLabel.setAttribute('for', 'seconds');
+        secondsLabel.innerText = 'Seconds';
+        durationSecondsUnitContainer.appendChild(secondsLabel);
+        const secondsInput = document.createElement('input');
+        secondsInput.setAttribute('name', 'durationUnit');
+        secondsInput.setAttribute('id', 'seconds' + currentExerciseId);
+        secondsInput.setAttribute('value', 'seconds');
+        secondsInput.setAttribute('type', 'radio');        
+        secondsInput.classList.add('number-input');
+        durationSecondsUnitContainer.appendChild(secondsInput);
+        //minutes       
+        const durationMinutesUnitContainer = document.createElement('div');
+        durationMinutesUnitContainer.classList.add('duration-minutes');        
+        durationUnitsInputsContainer.appendChild(durationMinutesUnitContainer);
+        const minutesLabel = document.createElement('label');
+        minutesLabel.setAttribute('for', 'minutes');
+        minutesLabel.innerText = 'Minutes';
+        durationMinutesUnitContainer.appendChild(minutesLabel);
+        const minutesInput = document.createElement('input');
+        minutesInput.setAttribute('name', 'durationUnit');
+        minutesInput.setAttribute('id', 'minutes' + currentExerciseId);
+        minutesInput.setAttribute('value', 'minutes');
+        minutesInput.setAttribute('type', 'radio');
+        minutesInput.setAttribute('checked', true);        
+        minutesInput.classList.add('number-input');
+        durationMinutesUnitContainer.appendChild(minutesInput);
         
         //power/hr limits
-        const fieldset = document.createElement('fieldset');
-        form.appendChild(fieldset);
+        const limitsFieldset = document.createElement('fieldset');
+        form.appendChild(limitsFieldset);
         const legend = document.createElement('legend');
         legend.innerText = 'Limits';
-        fieldset.appendChild(legend);
+        limitsFieldset.appendChild(legend);
         //limits type
         const limitTypeInputsContainer = document.createElement('div');
         limitTypeInputsContainer.classList.add('limit-type-inputs');
-        fieldset.appendChild(limitTypeInputsContainer);
+        limitsFieldset.appendChild(limitTypeInputsContainer);
         //power
         const limitPowerTypeInputContainer = document.createElement('div');
         limitPowerTypeInputContainer.classList.add('limit-power-type-input-container');        
@@ -107,7 +148,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         //lower limit
         const lowerLimitInputContainer = document.createElement('div');
         lowerLimitInputContainer.classList.add('lower-limit-input-container');
-        fieldset.appendChild(lowerLimitInputContainer);
+        limitsFieldset.appendChild(lowerLimitInputContainer);
         const lowerLimitLabel = document.createElement('label');
         lowerLimitLabel.setAttribute('for', 'lowerLimit');
         lowerLimitLabel.innerText = 'Lower limit';
@@ -121,7 +162,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         //upper limit
         const upperLimitInputContainer = document.createElement('div');
         upperLimitInputContainer.classList.add('upper-limit-input-container');
-        fieldset.appendChild(upperLimitInputContainer);
+        limitsFieldset.appendChild(upperLimitInputContainer);
         const upperLimitLabel = document.createElement('label');
         upperLimitLabel.setAttribute('for', 'upperLimit');
         upperLimitLabel.innerText = 'Upper limit';
@@ -196,7 +237,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     function readForm(e) {        
         const exerciseIndex = exercisesForms.indexOf(this);        
         training[exerciseIndex][e.target.name] = e.target.value;
-        
+        renderExercisesTimelines();
     }
 
     //add exercise timeline
@@ -206,12 +247,18 @@ document.addEventListener('DOMContentLoaded', ()=> {
         exercisesTimeline.appendChild(exerciseTimeline);
     }    
 
+    //render Exercises Timelines
+    function renderExercisesTimelines() {
+        console.log(training)
+    }
+
     //exercise template
     class Exercise {
-        constructor(id, name, duration, limitType, lowerLimit, upperLimit, lowerRPMLimit, upperRPMLimit, notes) {
+        constructor(id, name, duration, durationUnit, limitType, lowerLimit, upperLimit, lowerRPMLimit, upperRPMLimit, notes) {
             this.id = id;
             this.exerciseName = name;
             this.duration = duration;
+            this.durationUnit = durationUnit;
             this.limitType = limitType;
             this.lowerLimit = lowerLimit;
             this.upperLimit = upperLimit;
