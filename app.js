@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const addExerciseBtn = document.querySelector('.add-exercise-btn');
     const exercisesContainer = document.querySelector('.exercises-container');
     let currentExerciseId = 0;
+    const exercisesTimeline = document.querySelector('.timeline-container')
     const training = [];
     const exercisesForms = [];
     
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         let exercise = new Exercise(currentExerciseId, '', 0, true, 0, 0, 0, 0, '');
         training.push(exercise);        
         addExerciseForm(currentExerciseId); //adds exercise from
+        addExerciseTimeline(currentExerciseId); //add exercise Timeline
         currentExerciseId++;        
     }
 
@@ -185,14 +187,24 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const formToRemove = document.querySelector('form[data-id="' + e.target.dataset.id +'"]');
         exercisesContainer.removeChild(formToRemove);
         training.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise object
-        exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form        
+        exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form
+        const exerciseTimelineToRemove = exercisesTimeline.querySelector('#exeTimeline' + e.target.dataset.id);
+        exercisesTimeline.removeChild(exerciseTimelineToRemove); //remove exercise timeline       
     }
 
     //readForm function
     function readForm(e) {        
         const exerciseIndex = exercisesForms.indexOf(this);        
         training[exerciseIndex][e.target.name] = e.target.value;
+        
     }
+
+    //add exercise timeline
+    function addExerciseTimeline(currentExerciseId) {
+        const exerciseTimeline = document.createElement('div');
+        exerciseTimeline.setAttribute('id', 'exeTimeline' + currentExerciseId);
+        exercisesTimeline.appendChild(exerciseTimeline);
+    }    
 
     //exercise template
     class Exercise {
