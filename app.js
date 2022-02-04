@@ -4,14 +4,14 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const addExerciseBtn = document.querySelector('.add-exercise-btn');
     const exercisesContainer = document.querySelector('.exercises-container');
     let currentExerciseId = 0;
-    const training = {};
+    const training = [];
+    const exercisesForms = [];
     
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
-        let exercise = new Exercise(0, true, 0, 0, 0, 0, false, '');
-        training['id' + currentExerciseId] = exercise;
-        console.log(training);
+        let exercise = new Exercise(currentExerciseId, 0, true, 0, 0, 0, 0, false, '');
+        training.push(exercise);        
         addExerciseForm(currentExerciseId); //adds exercise from
         currentExerciseId++;        
     }
@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const form = document.createElement('form');
         form.classList.add('add-exercise');
         form.dataset.id = currentExerciseId;
+        form.setAttribute('name', 'exe' + currentExerciseId);
+        form.setAttribute('id', 'exe' + currentExerciseId);
         exercisesContainer.appendChild(form);
         const button = document.createElement('button');
         //close button
@@ -37,7 +39,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         exerciseNameLabel.innerText = 'Exercise name';
         exerciseNameContainer.appendChild(exerciseNameLabel);
         const exerciseNameInput = document.createElement('input');
-        exerciseNameInput.setAttribute('name', 'notes');        
+        exerciseNameInput.setAttribute('name', 'exerciseName');        
         exerciseNameInput.setAttribute('type', 'text');        
         exerciseNameInput.classList.add('number-input');
         exerciseNameContainer.appendChild(exerciseNameInput);
@@ -75,7 +77,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         limitPowerTypeInputContainer.appendChild(powerLabel);
         const powerInput = document.createElement('input');
         powerInput.setAttribute('name', 'limit-type');
-        powerInput.setAttribute('id', 'power');
+        powerInput.setAttribute('id', 'power' + currentExerciseId);
         powerInput.setAttribute('value', 'power');
         powerInput.setAttribute('type', 'radio');
         powerInput.setAttribute('checked', true);
@@ -91,7 +93,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         limitHrTypeInputContainer.appendChild(hrLabel);
         const hrInput = document.createElement('input');
         hrInput.setAttribute('name', 'limit-type');
-        hrInput.setAttribute('id', 'hr');
+        hrInput.setAttribute('id', 'hr' + currentExerciseId);
         hrInput.setAttribute('value', 'hr');
         hrInput.setAttribute('type', 'radio');        
         hrInput.classList.add('number-input');
@@ -162,7 +164,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
         notesInput.setAttribute('name', 'notes');        
         notesInput.setAttribute('type', 'text');        
         notesInput.classList.add('number-input');
-        notesInputContainer.appendChild(notesInput);        
+        notesInputContainer.appendChild(notesInput);
+        //add readForm function
+        form.addEventListener('change', readForm)
+        //push form to exercisesForms array
+        exercisesForms.push(form);
+        console.log(exercisesForms);
+        console.log(training);        
     }
 
     //remove exercise
@@ -170,13 +178,30 @@ document.addEventListener('DOMContentLoaded', ()=> {
         e.preventDefault();
         const formToRemove = document.querySelector('form[data-id="' + e.target.dataset.id +'"]');
         exercisesContainer.removeChild(formToRemove);
-        delete training['id' + e.target.dataset.id];
+        training.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise object
+        exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form
+        console.log(exercisesForms);
         console.log(training);
+    }
+
+    //readForm function
+    function readForm() {
+        const exerciseName = this.querySelector('[name=exerciseName');
+        const duration = this.querySelector('[name=duration]');
+        const limitsType = this.querySelector('#power' + this.dataset.id);
+        const lowerLimit = this.querySelector('[name=lower-limit]');
+        const upperLimit = this.querySelector('[name=upper-limit]');
+        const lowerCadenceLimit = this.querySelector('[name=lower-cadence-limit]');
+        const upperCadenceLimit = this.querySelector('[name=upper-cadence-limit]');
+        const notes = this.querySelector('[name=notes]');
+        const exerciseIndex = exercisesForms.indexOf(this);
+
     }
 
     //exercise template
     class Exercise {
-        constructor(duration, power, lowerLimit, upperLimit, lowerRPMLimit, upperRPMLimit, rest, notes) {
+        constructor(id, duration, power, lowerLimit, upperLimit, lowerRPMLimit, upperRPMLimit, rest, notes) {
+            this.id = id;
             this.duration = duration;
             this.power = power;
             this.lowerLimit = lowerLimit;
