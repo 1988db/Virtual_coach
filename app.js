@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
-        let exercise = new Exercise(currentExerciseId, 0, true, 0, 0, 0, 0, false, '');
+        let exercise = new Exercise(currentExerciseId, '', 0, true, 0, 0, 0, 0, '');
         training.push(exercise);        
         addExerciseForm(currentExerciseId); //adds exercise from
         currentExerciseId++;        
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         button.innerText = 'X';
         button.classList.add('remove-excercise-btn');
         button.dataset.id = currentExerciseId;
+        button.setAttribute('id', 'btn' + currentExerciseId);
         button.addEventListener('click', removeExercise);
         form.appendChild(button);
         //exercise name
@@ -40,7 +41,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         exerciseNameContainer.appendChild(exerciseNameLabel);
         const exerciseNameInput = document.createElement('input');
         exerciseNameInput.setAttribute('name', 'exerciseName');        
-        exerciseNameInput.setAttribute('type', 'text');        
+        exerciseNameInput.setAttribute('type', 'text');
+        exerciseNameInput.setAttribute('id', 'name' + currentExerciseId);        
         exerciseNameInput.classList.add('number-input');
         exerciseNameContainer.appendChild(exerciseNameInput);
         //duration
@@ -54,6 +56,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const durationInput = document.createElement('input');
         durationInput.setAttribute('name', 'duration');
         durationInput.setAttribute('type', 'number');
+        durationInput.setAttribute('id', 'duration' + currentExerciseId);
         durationInput.classList.add('number-input');
         durationInputContainer.appendChild(durationInput);
         
@@ -76,7 +79,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         powerLabel.innerText = 'Power';
         limitPowerTypeInputContainer.appendChild(powerLabel);
         const powerInput = document.createElement('input');
-        powerInput.setAttribute('name', 'limit-type');
+        powerInput.setAttribute('name', 'limitType');
         powerInput.setAttribute('id', 'power' + currentExerciseId);
         powerInput.setAttribute('value', 'power');
         powerInput.setAttribute('type', 'radio');
@@ -92,7 +95,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         hrLabel.innerText = 'HR';
         limitHrTypeInputContainer.appendChild(hrLabel);
         const hrInput = document.createElement('input');
-        hrInput.setAttribute('name', 'limit-type');
+        hrInput.setAttribute('name', 'limitType');
         hrInput.setAttribute('id', 'hr' + currentExerciseId);
         hrInput.setAttribute('value', 'hr');
         hrInput.setAttribute('type', 'radio');        
@@ -104,12 +107,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
         lowerLimitInputContainer.classList.add('lower-limit-input-container');
         fieldset.appendChild(lowerLimitInputContainer);
         const lowerLimitLabel = document.createElement('label');
-        lowerLimitLabel.setAttribute('for', 'lower-limit');
+        lowerLimitLabel.setAttribute('for', 'lowerLimit');
         lowerLimitLabel.innerText = 'Lower limit';
         lowerLimitInputContainer.appendChild(lowerLimitLabel);
         const lowerLimitInput = document.createElement('input');
-        lowerLimitInput.setAttribute('name', 'lower-limit');        
-        lowerLimitInput.setAttribute('type', 'number');        
+        lowerLimitInput.setAttribute('name', 'lowerLimit');        
+        lowerLimitInput.setAttribute('type', 'number');
+        lowerLimitInput.setAttribute('id', 'lowerLimit' + currentExerciseId);        
         lowerLimitInput.classList.add('number-input');
         lowerLimitInputContainer.appendChild(lowerLimitInput);
         //upper limit
@@ -117,12 +121,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
         upperLimitInputContainer.classList.add('upper-limit-input-container');
         fieldset.appendChild(upperLimitInputContainer);
         const upperLimitLabel = document.createElement('label');
-        upperLimitLabel.setAttribute('for', 'upper-limit');
+        upperLimitLabel.setAttribute('for', 'upperLimit');
         upperLimitLabel.innerText = 'Upper limit';
         upperLimitInputContainer.appendChild(upperLimitLabel);
         const upperLimitInput = document.createElement('input');
-        upperLimitInput.setAttribute('name', 'upper-limit');        
-        upperLimitInput.setAttribute('type', 'number');        
+        upperLimitInput.setAttribute('name', 'upperLimit');        
+        upperLimitInput.setAttribute('type', 'number');
+        upperLimitInput.setAttribute('id', 'upperLimit' + currentExerciseId);       
         upperLimitInput.classList.add('number-input');
         upperLimitInputContainer.appendChild(upperLimitInput);
 
@@ -131,12 +136,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
         lowerCadenceLimitInputContainer.classList.add('lower-cadence-limit-input-container');
         form.appendChild(lowerCadenceLimitInputContainer);
         const cadenceLowerLimitLabel = document.createElement('label');
-        cadenceLowerLimitLabel.setAttribute('for', 'lower-cadence-limit');
+        cadenceLowerLimitLabel.setAttribute('for', 'lowerCadenceLimit');
         cadenceLowerLimitLabel.innerText = 'Lower RPM limit';
         lowerCadenceLimitInputContainer.appendChild(cadenceLowerLimitLabel);
         const cadenceLowerLimitInput = document.createElement('input');
-        cadenceLowerLimitInput.setAttribute('name', 'lower-cadence-limit');        
-        cadenceLowerLimitInput.setAttribute('type', 'number');        
+        cadenceLowerLimitInput.setAttribute('name', 'lowerCadenceLimit');        
+        cadenceLowerLimitInput.setAttribute('type', 'number');
+        cadenceLowerLimitInput.setAttribute('id', 'lowerCadenceLimit' + currentExerciseId);         
         cadenceLowerLimitInput.classList.add('number-input');
         lowerCadenceLimitInputContainer.appendChild(cadenceLowerLimitInput);
         //cadence upper limit
@@ -144,12 +150,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
         upperCadenceLimitInputContainer.classList.add('upper-cadence-limit-input-container');
         form.appendChild(upperCadenceLimitInputContainer);
         const cadenceUpperLimitLabel = document.createElement('label');
-        cadenceUpperLimitLabel.setAttribute('for', 'upper-cadence-limit');
+        cadenceUpperLimitLabel.setAttribute('for', 'upperCadenceLimit');
         cadenceUpperLimitLabel.innerText = 'Upper RPM limit';
         upperCadenceLimitInputContainer.appendChild(cadenceUpperLimitLabel);
         const cadenceUpperLimitInput = document.createElement('input');
-        cadenceUpperLimitInput.setAttribute('name', 'upper-cadence-limit');        
-        cadenceUpperLimitInput.setAttribute('type', 'number');        
+        cadenceUpperLimitInput.setAttribute('name', 'upperCadenceLimit');        
+        cadenceUpperLimitInput.setAttribute('type', 'number');
+        cadenceUpperLimitInput.setAttribute('id', 'upperCadenceLimit' + currentExerciseId);       
         cadenceUpperLimitInput.classList.add('number-input');
         upperCadenceLimitInputContainer.appendChild(cadenceUpperLimitInput);
         //notes
@@ -162,15 +169,14 @@ document.addEventListener('DOMContentLoaded', ()=> {
         notesInputContainer.appendChild(notesLabel);
         const notesInput = document.createElement('input');
         notesInput.setAttribute('name', 'notes');        
-        notesInput.setAttribute('type', 'text');        
+        notesInput.setAttribute('type', 'text');
+        notesInput.setAttribute('id', 'notes' + currentExerciseId);        
         notesInput.classList.add('number-input');
         notesInputContainer.appendChild(notesInput);
         //add readForm function
         form.addEventListener('change', readForm)
         //push form to exercisesForms array
-        exercisesForms.push(form);
-        console.log(exercisesForms);
-        console.log(training);        
+        exercisesForms.push(form);             
     }
 
     //remove exercise
@@ -179,36 +185,26 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const formToRemove = document.querySelector('form[data-id="' + e.target.dataset.id +'"]');
         exercisesContainer.removeChild(formToRemove);
         training.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise object
-        exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form
-        console.log(exercisesForms);
-        console.log(training);
+        exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form        
     }
 
     //readForm function
-    function readForm() {
-        const exerciseName = this.querySelector('[name=exerciseName');
-        const duration = this.querySelector('[name=duration]');
-        const limitsType = this.querySelector('#power' + this.dataset.id);
-        const lowerLimit = this.querySelector('[name=lower-limit]');
-        const upperLimit = this.querySelector('[name=upper-limit]');
-        const lowerCadenceLimit = this.querySelector('[name=lower-cadence-limit]');
-        const upperCadenceLimit = this.querySelector('[name=upper-cadence-limit]');
-        const notes = this.querySelector('[name=notes]');
-        const exerciseIndex = exercisesForms.indexOf(this);
-
+    function readForm(e) {        
+        const exerciseIndex = exercisesForms.indexOf(this);        
+        training[exerciseIndex][e.target.name] = e.target.value;
     }
 
     //exercise template
     class Exercise {
-        constructor(id, duration, power, lowerLimit, upperLimit, lowerRPMLimit, upperRPMLimit, rest, notes) {
+        constructor(id, name, duration, limitType, lowerLimit, upperLimit, lowerRPMLimit, upperRPMLimit, notes) {
             this.id = id;
+            this.exerciseName = name;
             this.duration = duration;
-            this.power = power;
+            this.limitType = limitType;
             this.lowerLimit = lowerLimit;
             this.upperLimit = upperLimit;
             this.lowerRPMLimit = lowerRPMLimit;
-            this.upperRPMLimit = upperRPMLimit;
-            this.rest = rest;
+            this.upperRPMLimit = upperRPMLimit;            
             this.notes = notes;
         }
     }
