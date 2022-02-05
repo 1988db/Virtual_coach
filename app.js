@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const addExerciseBtn = document.querySelector('.add-exercise-btn');
     const exercisesContainer = document.querySelector('.exercises-container');
     let currentExerciseId = 0;
+    trainingTime = 0;
     const exercisesTimeline = document.querySelector('.timeline-container')
     const training = [];
     const exercisesForms = [];
@@ -227,10 +228,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
         e.preventDefault();
         const formToRemove = document.querySelector('form[data-id="' + e.target.dataset.id +'"]');
         exercisesContainer.removeChild(formToRemove);
+        trainingTime -= training[exercisesForms.indexOf(formToRemove)].duration; //reduce training time
         training.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise object
         exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form
         const exerciseTimelineToRemove = exercisesTimeline.querySelector('#exeTimeline' + e.target.dataset.id);
-        exercisesTimeline.removeChild(exerciseTimelineToRemove); //remove exercise timeline       
+        exercisesTimeline.removeChild(exerciseTimelineToRemove); //remove exercise timeline               
     }
 
     //readForm function
@@ -250,7 +252,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //render Exercises Timelines
     function renderExercisesTimelines() {
         //count training time
-        let trainingTime = training.reduce(function (total, current) {
+        trainingTime = training.reduce(function (total, current) {
             if (current.durationUnit === 'minutes') {
                 return total + current.duration * 60;
             } else {
