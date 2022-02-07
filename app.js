@@ -31,11 +31,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
-        let exercise = new Exercise(currentExerciseId, '', 0, 'minutes', true, 0, 0, 0, 0, '');
+        let exercise = new Exercise(currentExerciseId, '', 0, 'minutes', 'power', 0, 0, 0, 0, '');
         training.push(exercise);        
         addExerciseForm(currentExerciseId); //adds exercise from
         addExerciseTimeline(currentExerciseId); //add exercise Timeline
-        currentExerciseId++;        
+        currentExerciseId++;             
     }
 
     function addExerciseForm(currentExerciseId) {
@@ -257,8 +257,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //readForm function
     function readForm(e) {        
-        const exerciseIndex = exercisesForms.indexOf(this);        
-        training[exerciseIndex][e.target.name] = e.target.value;
+        const exerciseIndex = exercisesForms.indexOf(this);
+        if (e.target.name === 'duration' || e.target.name === 'id' ||
+        e.target.name === 'lowerLimit' || e.target.name === 'upperLimit' ||
+        e.target.name === 'lowerCadenceLimit' || e.target.name === 'upperCadenceLimit') {
+            training[exerciseIndex][e.target.name] = parseInt(e.target.value);
+            console.log(e.target);
+            console.log(training)
+        } else {
+            training[exerciseIndex][e.target.name] = e.target.value;
+        }
         renderExercisesTimelines();
     }
 
@@ -291,12 +299,17 @@ document.addEventListener('DOMContentLoaded', ()=> {
             }
             element.style.width = Math.round(currentExerciseDuration / trainingTime * 100) + '%';
         })
-        //counting height
+        //counting div height
+        let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {
+            return Math.max(prevValue.upperLimit, currentValue.upperLimit);
+        }, -1) //looking for max limit value
+        console.log(exercisesTimelineHeightReferenceValue)
+               
     }
 
     //exercise template
     class Exercise {
-        constructor(id, name, duration, durationUnit, limitType, lowerLimit, upperLimit, lowerRPMLimit, upperRPMLimit, notes) {
+        constructor(id, name, duration, durationUnit, limitType, lowerLimit, upperLimit, lowerCadenceLimit, upperCadenceLimit, notes) {
             this.id = id;
             this.exerciseName = name;
             this.duration = duration;
@@ -304,8 +317,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
             this.limitType = limitType;
             this.lowerLimit = lowerLimit;
             this.upperLimit = upperLimit;
-            this.lowerRPMLimit = lowerRPMLimit;
-            this.upperRPMLimit = upperRPMLimit;            
+            this.lowerCadenceLimit = lowerCadenceLimit;
+            this.upperCadenceLimit = upperCadenceLimit;            
             this.notes = notes;
         }
     }
