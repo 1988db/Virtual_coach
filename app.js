@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesTimeline = document.querySelector('.timeline-container')
     const training = [];
     const exercisesForms = [];
+    const exercisesTimelines = [];
     
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
@@ -232,7 +233,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         training.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise object
         exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form
         const exerciseTimelineToRemove = exercisesTimeline.querySelector('#exeTimeline' + e.target.dataset.id);
-        exercisesTimeline.removeChild(exerciseTimelineToRemove); //remove exercise timeline               
+        exercisesTimeline.removeChild(exerciseTimelineToRemove); //remove exercise timeline
+        exercisesTimelines.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise timeline div from array               
     }
 
     //readForm function
@@ -247,6 +249,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const exerciseTimeline = document.createElement('div');
         exerciseTimeline.setAttribute('id', 'exeTimeline' + currentExerciseId);
         exercisesTimeline.appendChild(exerciseTimeline);
+        exercisesTimelines.push(exerciseTimeline);
+        console.log(exercisesTimelines);
     }    
 
     //render Exercises Timelines
@@ -259,7 +263,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
                return total + parseInt(current.duration);
             }            
         }, 0)
-        console.log(trainingTime);
+        //counting div width
+        exercisesTimelines.forEach((element, index) => {
+            let currentExerciseDuration = 0;
+            if (training[index].durationUnit === 'minutes') {
+                currentExerciseDuration = training[index].duration * 60;
+            } else {
+                currentExerciseDuration = training[index].duration;
+            }
+            element.style.width = Math.round(currentExerciseDuration / trainingTime * 100) + '%';
+        })
     }
 
     //exercise template
