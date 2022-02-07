@@ -2,13 +2,31 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const showPlannerBtn = document.querySelector('.show-planner');    
     const plannerContainer = document.querySelector('.planner-container');
     const addExerciseBtn = document.querySelector('.add-exercise-btn');
+    const limitForm = document.getElementById('limits');
+    const ftpInput = document.getElementById('ftp');
+    const hrMaxInput = document.getElementById('hrMax');
     const exercisesContainer = document.querySelector('.exercises-container');
     let currentExerciseId = 0;
     trainingTime = 0;
     const exercisesTimeline = document.querySelector('.timeline-container')
     const training = [];
     const exercisesForms = [];
-    const exercisesTimelines = [];
+    const exercisesTimelines = [];    
+    let ftp = 0;
+    let hrMax = 0;
+
+    //take data from limits form
+    limitForm.addEventListener('change', setLimits);
+
+    //set Limits function
+    function setLimits () {
+        ftp = ftpInput.value;
+        hrMax = hrMaxInput.value;
+        console.log('FTP ' + ftp, 'hrMax ' + hrMax);
+        if (training.length > 0) {
+            renderExercisesTimelines(); //update exercises
+        }
+    }
     
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
@@ -273,6 +291,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
             }
             element.style.width = Math.round(currentExerciseDuration / trainingTime * 100) + '%';
         })
+        //counting height
     }
 
     //exercise template
