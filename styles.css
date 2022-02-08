@@ -120,19 +120,16 @@ input[name=notes] {
 
 .timeline-container {
     display: flex;
+    align-items: flex-end;
     width: 100%;
-    height: 40px;
-    border: 1px solid black;
+    height: 122px;    
+    background-color: rgb(112, 161, 200);
+    background-color: transparent;
 }
 
 .timeline-container div{
     display: flex;    
-    height: 38px;
-    border-right: 1px solid black;
-    background-color: brown;
-}
-
-.timeline-container div:last-of-type{    
-    border-right: 0;
-    
+    height: 100px;
+    border: 1px solid black;
+    background-color: rgb(183, 241, 156);
 }
