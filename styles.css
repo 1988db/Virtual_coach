@@ -128,6 +128,11 @@ input[name=notes] {
 .timeline-container div{
     display: flex;    
     height: 38px;
-    border: 1px solid black;
+    border-right: 1px solid black;
     background-color: brown;
+}
+
+.timeline-container div:last-of-type{    
+    border-right: 0;
+    
 }

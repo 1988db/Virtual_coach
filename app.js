@@ -295,13 +295,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
             if (training[index].durationUnit === 'minutes') {
                 currentExerciseDuration = training[index].duration * 60;
             } else {
-                currentExerciseDuration = training[index].duration;
+                currentExerciseDuration = training[index].duration * 3; //multiply for better visibility 
             }
-            element.style.width = Math.round(currentExerciseDuration / trainingTime * 100) + '%';
+            element.style.width = Math.round(currentExerciseDuration / trainingTime * 10000) / 100 + '%';
         })
         //counting div height
-        let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {
-            return Math.max(prevValue.upperLimit, currentValue.upperLimit);
+        let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {            
+            return Math.max(prevValue, currentValue.upperLimit);            
         }, -1) //looking for max limit value
         console.log(exercisesTimelineHeightReferenceValue)
                
