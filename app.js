@@ -248,10 +248,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
         exercisesContainer.removeChild(formToRemove);
         trainingTime -= training[exercisesForms.indexOf(formToRemove)].duration; //reduce training time
         training.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise object
+        exercisesTimelines.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise timeline div from array
         exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form
         const exerciseTimelineToRemove = exercisesTimeline.querySelector('#exeTimeline' + e.target.dataset.id);
         exercisesTimeline.removeChild(exerciseTimelineToRemove); //remove exercise timeline
-        exercisesTimelines.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise timeline div from array
+        
         renderExercisesTimelines()               
     }
 
@@ -278,6 +279,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //render Exercises Timelines
     function renderExercisesTimelines() {
+        console.log(training);
+        
         //count training time
         trainingTime = training.reduce(function (total, current) {
             if (current.durationUnit === 'minutes') {
@@ -286,6 +289,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
                return total + parseInt(current.duration);
             }            
         }, 0)
+        console.log(trainingTime);
         //setting divs width
         exercisesTimelines.forEach((element, index) => {
             let currentExerciseDuration = 0;
@@ -295,17 +299,24 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 currentExerciseDuration = training[index].duration * 3; //multiply for better visibility 
             }
             element.style.width = Math.round(currentExerciseDuration / trainingTime * 10000) / 100 + '%';
+            console.log(element);
+            
         })
         //counting div height
         let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {            
             return Math.max(prevValue, currentValue.upperLimit);            
         }, -1) //looking for max limit value
-        //setting divs height and bacground color
-        exercisesTimelines.forEach((element, index) => {
+        console.log('reference value ', exercisesTimelineHeightReferenceValue)
+        //setting divs height and bacground color and border
+        exercisesTimelines.forEach((element, index) => {            
             element.style.height = Math.round(training[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
             element.style.backgroundImage =
             'linear-gradient(to top, yellow 0%, yellow ' + (training[index].lowerLimit / training[index].upperLimit *100) +
              '%, red ' + (training[index].lowerLimit / training[index].upperLimit *100) + '%, red 100%';
+             //when limits exist draw border
+             //if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0) {
+            // element.style.border = '1px solid black'; 
+            //}                        
         })
     }
 
