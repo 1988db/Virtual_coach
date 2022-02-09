@@ -129,12 +129,32 @@ input[name=notes] {
 
 .side-labels, .empty {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     width: 10%;
+}
+
+.side-labels div {
+    height: 25%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.first-side-label {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
 }
 
 .bottom-labels {
     display: flex;
+    width: 100%;    
+}
+
+.bottom-labels div {
+    display: flex;
+    width: 20%;
+    justify-content: space-between;
 }
 
 .timeline-container {
