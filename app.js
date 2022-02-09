@@ -314,9 +314,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
             'linear-gradient(to top, yellow 0%, yellow ' + (training[index].lowerLimit / training[index].upperLimit *100) +
              '%, red ' + (training[index].lowerLimit / training[index].upperLimit *100) + '%, red 100%';
              //when limits exist draw border
-             //if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0) {
-            // element.style.border = '1px solid black'; 
-            //}                        
+            if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration) {
+            element.style.border = '1px solid black'; 
+            }                        
         })
     }
 
