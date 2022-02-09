@@ -117,21 +117,24 @@ input[name=exerciseName] {
 input[name=notes] {
     width: 135px;
 }
-.training-preview {
-    display: flex;
-}
 
-.side-labels-container, .timeline-bottom-labels-container {
+.training-preview {
     display: flex;
     flex-direction: column;    
 }
 
-.side-labels-container {
-    width: 7%;
+.training-preview-top-container, .training-preview-bottom-container {
+    display: flex;
 }
 
-.timeline-bottom-labels-container {
-    width: 93%; 
+.side-labels, .empty {
+    display: flex;
+    flex-direction: column;
+    width: 10%;
+}
+
+.bottom-labels {
+    display: flex;
 }
 
 .timeline-container {
