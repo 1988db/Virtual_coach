@@ -51,14 +51,14 @@ body {
 }
 
 .limits-container {
-    width: 120px;
+    width: 150px;
     padding: 5px;
     display: flex;
     flex-direction: column;
     border: 1px solid black;
 }
 
-.ftp-limit-container, .hrMax-limit-container {
+.ftp-radio-input-container, .hrMax-radio-input-container, .ftp-limit-container, .hrMax-limit-container {
     display: flex;
     justify-content: space-between;
     margin: 5px 0;
