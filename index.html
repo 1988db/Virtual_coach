@@ -21,12 +21,20 @@
             <div class="limits-container">
                 <form name="limits" id="limits">
                     <h3 class="limits">Set your limits</h3>
+                    <div class="ftp-radio-input-container">
+                        <label for="ftp">Use FTP</label>
+                        <input class="ftp" name="chosenLimitType" id="ftp" type="radio" value="ftp">
+                    </div>
+                    <div class="hrMax-radio-input-container">
+                        <label for="ftp">Use HR Max</label>
+                        <input class="hrMax" name="chosenLimitType" id="hrMax" type="radio" value="hrMax">   
+                    </div>
                     <div class="ftp-limit-container">
                         <label for="ftp">FTP</label>
                         <input class="ftp" name="ftp" id="ftp" type="number">
                     </div>
                     <div class="hrMax-limit-container">
-                        <label for="ftp">HR Max</label>
+                        <label for="hrMax">HR Max</label>
                         <input class="hrMax" name="hrMax" id="hrMax" type="number">   
                     </div>            
                 </form>
@@ -37,21 +45,40 @@
           <div class="training-preview">
               <div class="training-preview-top-container">
                   <div class="side-labels">
-                      <div class="first-side-label">1</div>
-                      <div class="second-side-label">2</div>
-                      <div class="third-side-label">3</div>
-                      <div class="fourth-side-label">5<br>4</div>
+                      <div class="first-side-label">
+                        <span class="first-label"></span>
+                      </div>
+                      <div class="second-side-label">
+                        <span class="second-label"></span>
+                      </div>
+                      <div class="third-side-label">
+                        <span class="third-label"></span>
+                      </div>
+                      <div class="fourth-side-label">
+                        <span class="fourth-label"></span>
+                      </div>
                   </div>
                   <div class="timeline-container"></div>
               </div>
               <div class="training-preview-bottom-container">
                   <div class="empty"></div>
                   <div class="bottom-labels">
-                    <div class="first-bottom-label">1</div>
-                    <div class="second-bottom-label">2</div>
-                    <div class="third-bottom-label">3</div>
-                    <div class="fourth-bottom-label">4</div>
-                    <div class="fifth-bottom-label"><span>5</span><span>6</span></div>
+                    <div class="first-bottom-label">
+                        <span class="first-label"></span>
+                    </div>
+                    <div class="second-bottom-label">
+                        <span class="second-label"></span>
+                    </div>
+                    <div class="third-bottom-label">
+                        <span class="third-label"></span>
+                    </div>
+                    <div class="fourth-bottom-label">
+                        <span class="fourth-label"></span>
+                    </div>
+                    <div class="fifth-bottom-label">
+                        <span class="fifth-label"></span>
+                        <span class="sixth-label"></span>
+                    </div>
                   </div>
               </div>
             
