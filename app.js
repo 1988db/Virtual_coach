@@ -14,9 +14,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesTimelines = [];    
     let ftp = 0;
     let hrMax = 0;
-    const exercisesBgColors = [
-        'lightblue', 'lightgreen', 'green', 'yellow', 'orange', 'red', 'purple'
-    ]
 
     //take data from limits form
     limitForm.addEventListener('change', setLimits);
@@ -281,7 +278,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }    
 
     //render Exercises Timelines
-    function renderExercisesTimelines() {        
+    function renderExercisesTimelines() {
+        console.log(training);
+        
         //count training time
         trainingTime = training.reduce(function (total, current) {
             if (current.durationUnit === 'minutes') {
@@ -289,7 +288,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
             } else {
                return total + parseInt(current.duration);
             }            
-        }, 0)        
+        }, 0)
+        console.log(trainingTime);
         //setting divs width
         exercisesTimelines.forEach((element, index) => {
             let currentExerciseDuration = 0;
@@ -307,14 +307,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
             return Math.max(prevValue, currentValue.upperLimit);            
         }, -1) //looking for max limit value
         console.log('reference value ', exercisesTimelineHeightReferenceValue)
-        //setting divs height and bacground color
+        //setting divs height and bacground color and border
         exercisesTimelines.forEach((element, index) => {            
             element.style.height = Math.round(training[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
             element.style.backgroundImage =
-            //pick bgcolor corresponding to training zone
-            if ()
-            'linear-gradient(to top, ' + exerciseBgColor + ' 0%,' + exerciseBgColor + ' '  + (training[index].lowerLimit / training[index].upperLimit *100) +
-             '%, grey ' + (training[index].lowerLimit / training[index].upperLimit *100) + '%, grey 100%';
+            'linear-gradient(to top, yellow 0%, yellow ' + (training[index].lowerLimit / training[index].upperLimit *100) +
+             '%, red ' + (training[index].lowerLimit / training[index].upperLimit *100) + '%, red 100%';
              //when limits exist draw border
             if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration) {
             element.style.border = '1px solid black'; 
