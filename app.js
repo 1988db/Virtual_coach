@@ -136,36 +136,37 @@ document.addEventListener('DOMContentLoaded', ()=> {
         limitTypeInputsContainer.classList.add('limit-type-inputs');
         limitsFieldset.appendChild(limitTypeInputsContainer);
         //power
-        const limitPowerTypeInputContainer = document.createElement('div');
-        limitPowerTypeInputContainer.classList.add('limit-power-type-input-container');        
-        limitTypeInputsContainer.appendChild(limitPowerTypeInputContainer);
-        const powerLabel = document.createElement('label');
-        powerLabel.setAttribute('for', 'power');
-        powerLabel.innerText = 'Power';
-        limitPowerTypeInputContainer.appendChild(powerLabel);
-        const powerInput = document.createElement('input');
-        powerInput.setAttribute('name', 'limitType');
-        powerInput.setAttribute('id', 'power' + currentExerciseId);
-        powerInput.setAttribute('value', 'power');
-        powerInput.setAttribute('type', 'radio');
-        powerInput.setAttribute('checked', true);
-        powerInput.classList.add('number-input');
-        limitPowerTypeInputContainer.appendChild(powerInput);
-        //hr
-        const limitHrTypeInputContainer = document.createElement('div');
-        limitHrTypeInputContainer.classList.add('limit-hr-type-input-container');
-        limitTypeInputsContainer.appendChild(limitHrTypeInputContainer);
-        const hrLabel = document.createElement('label');
-        hrLabel.setAttribute('for', 'hr');
-        hrLabel.innerText = 'HR';
-        limitHrTypeInputContainer.appendChild(hrLabel);
-        const hrInput = document.createElement('input');
-        hrInput.setAttribute('name', 'limitType');
-        hrInput.setAttribute('id', 'hr' + currentExerciseId);
-        hrInput.setAttribute('value', 'hr');
-        hrInput.setAttribute('type', 'radio');        
-        hrInput.classList.add('number-input');
-        limitHrTypeInputContainer.appendChild(hrInput);
+        // const limitPowerTypeInputContainer = document.createElement('div');
+        // limitPowerTypeInputContainer.classList.add('limit-power-type-input-container');        
+        // limitTypeInputsContainer.appendChild(limitPowerTypeInputContainer);
+        // const powerLabel = document.createElement('label');
+        // powerLabel.setAttribute('for', 'power');
+        // powerLabel.innerText = 'Power';
+        // limitPowerTypeInputContainer.appendChild(powerLabel);
+        // const powerInput = document.createElement('input');
+        // powerInput.setAttribute('name', 'limitType');
+        // powerInput.setAttribute('id', 'power' + currentExerciseId);
+        // powerInput.setAttribute('value', 'power');
+        // powerInput.setAttribute('type', 'radio');
+        // powerInput.setAttribute('checked', true);
+        // powerInput.classList.add('number-input');
+        // limitPowerTypeInputContainer.appendChild(powerInput);
+        // //hr
+        // const limitHrTypeInputContainer = document.createElement('div');
+        // limitHrTypeInputContainer.classList.add('limit-hr-type-input-container');
+        // limitTypeInputsContainer.appendChild(limitHrTypeInputContainer);
+        // const hrLabel = document.createElement('label');
+        // hrLabel.setAttribute('for', 'hr');
+        // hrLabel.innerText = 'HR';
+        // limitHrTypeInputContainer.appendChild(hrLabel);
+        // const hrInput = document.createElement('input');
+        // hrInput.setAttribute('name', 'limitType');
+        // hrInput.setAttribute('id', 'hr' + currentExerciseId);
+        // hrInput.setAttribute('value', 'hr');
+        // hrInput.setAttribute('type', 'radio');        
+        // hrInput.classList.add('number-input');
+        // limitHrTypeInputContainer.appendChild(hrInput);
+
         //inputs
         //lower limit
         const lowerLimitInputContainer = document.createElement('div');
@@ -196,10 +197,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
         upperLimitInput.classList.add('number-input');
         upperLimitInputContainer.appendChild(upperLimitInput);
 
+        //cadence
+        const cadenceFieldset = document.createElement('fieldset');
+        form.appendChild(cadenceFieldset);
+        const cadenceLegend = document.createElement('legend');
+        cadenceLegend.innerText = 'Cadence limits';
+        cadenceFieldset.appendChild(cadenceLegend);
         //cadence lower limit
         const lowerCadenceLimitInputContainer = document.createElement('div');
         lowerCadenceLimitInputContainer.classList.add('lower-cadence-limit-input-container');
-        form.appendChild(lowerCadenceLimitInputContainer);
+        cadenceFieldset.appendChild(lowerCadenceLimitInputContainer);
         const cadenceLowerLimitLabel = document.createElement('label');
         cadenceLowerLimitLabel.setAttribute('for', 'lowerCadenceLimit');
         cadenceLowerLimitLabel.innerText = 'Lower RPM limit';
@@ -213,7 +220,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         //cadence upper limit
         const upperCadenceLimitInputContainer = document.createElement('div');
         upperCadenceLimitInputContainer.classList.add('upper-cadence-limit-input-container');
-        form.appendChild(upperCadenceLimitInputContainer);
+        cadenceFieldset.appendChild(upperCadenceLimitInputContainer);
         const cadenceUpperLimitLabel = document.createElement('label');
         cadenceUpperLimitLabel.setAttribute('for', 'upperCadenceLimit');
         cadenceUpperLimitLabel.innerText = 'Upper RPM limit';
@@ -312,7 +319,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
             element.style.height = Math.round(training[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
             element.style.backgroundImage =
             //pick bgcolor corresponding to training zone
-            if ()
+            //if ()
             'linear-gradient(to top, ' + exerciseBgColor + ' 0%,' + exerciseBgColor + ' '  + (training[index].lowerLimit / training[index].upperLimit *100) +
              '%, grey ' + (training[index].lowerLimit / training[index].upperLimit *100) + '%, grey 100%';
              //when limits exist draw border
