@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const showPlannerBtn = document.querySelector('.show-planner');    
     const plannerContainer = document.querySelector('.planner-container');
     const addExerciseBtn = document.querySelector('.add-exercise-btn');
-    const limitForm = document.getElementById('limits');
+    const limitForm = document.getElementById('limits');    
     const ftpInput = document.getElementById('ftp');
     const hrMaxInput = document.getElementById('hrMax');
     const exercisesContainer = document.querySelector('.exercises-container');
@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesTimelines = [];    
     let ftp = 0;
     let hrMax = 0;
+    let limitType = '';
     const exercisesBgColors = [
         'lightblue', 'lightgreen', 'green', 'yellow', 'orange', 'red', 'purple'
     ]
@@ -24,10 +25,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //set Limits function
     function setLimits () {
         ftp = ftpInput.value;
-        hrMax = hrMaxInput.value;        
+        hrMax = hrMaxInput.value;
+        limitType = limitForm.chosenLimitType.value;     
         if (training.length > 0) {
             renderExercisesTimelines(); //update exercises
         }
+        console.log(ftp, hrMax, limitType)
     }
     
     //add new exercise from and push exercise object to the training array
@@ -275,7 +278,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
             training[exerciseIndex][e.target.name] = parseInt(e.target.value);            
         } else {
             training[exerciseIndex][e.target.name] = e.target.value;
-        }
+        }        
         renderExercisesTimelines();
     }
 
@@ -331,12 +334,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //exercise template
     class Exercise {
-        constructor(id, name, duration, durationUnit, limitType, lowerLimit, upperLimit, lowerCadenceLimit, upperCadenceLimit, notes) {
+        constructor(id, name, duration, durationUnit, lowerLimit, upperLimit, lowerCadenceLimit, upperCadenceLimit, notes) {
             this.id = id;
             this.exerciseName = name;
             this.duration = duration;
-            this.durationUnit = durationUnit;
-            this.limitType = limitType;
+            this.durationUnit = durationUnit;            
             this.lowerLimit = lowerLimit;
             this.upperLimit = upperLimit;
             this.lowerCadenceLimit = lowerCadenceLimit;
