@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesForms = [];
     const exercisesTimelines = [];    
     let ftp = 0;
-    let hrMax = 0;
+    let hrMax = 185;
     let limitType = 'ftp';
     const exercisesBgColors = [
         'lightblue', 'lightgreen', 'green', 'yellow', 'orange', 'red', 'purple'
@@ -24,8 +24,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
     limitForm.addEventListener('change', setLimits);
 
     //set Limits function
-    function setLimits () {
-        ftp = ftpInput.value;        
+    function setLimits (e) {
+        if (e.target.name === "ftp") {
+            ftp = e.target.value;
+        }
+        if (e.target.name === 'hrMax') {
+            hrMax = e.target.value;
+        }        
         limitType = limitForm.chosenLimitType.value;
         if (limitForm.doNotKnowMyHrMax.checked) {
             ageInput.style.display = 'flex';
@@ -34,9 +39,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }
         if (limitForm.doNotKnowMyHrMax.checked) {
             hrMax = 220 - limitForm.age.value;
-        } else {
-            hrMax = limitForm.hrMax.value;
-        } 
+        }
         if (training.length > 0) {
             renderExercisesTimelines(); //update exercises
         }
@@ -350,14 +353,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
         //counting div height
         if (limitType === 'hrMax') {   ///if limits based on hrMax
-            exercisesTimelines.forEach((element, index) => {
-                if (training[index].upperLimit > hrMax) {
-                    training[index].upperLimit = hrMax;
-                }
+            exercisesTimelines.forEach((element, index) => {                
                 element.style.height = Math.round(training[index].upperLimit / hrMax * 10000) / 100 + '%';
-                //when limits exist draw border                
-                if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration) {
+                //when limits exist draw border                               
+                if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration > 0) {
                     element.style.border = '1px solid black'; 
+                    console.log('waruenk') 
                 }
             })
         } else if (limitType === 'ftp') {   //if limits based on power
