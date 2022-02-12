@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const limitForm = document.getElementById('limits');    
     const ftpInput = document.getElementById('ftp');
     const hrMaxInput = document.getElementById('hrMax');
+    const ageInput = document.querySelector('.age-container');
     const exercisesContainer = document.querySelector('.exercises-container');
     let currentExerciseId = 0;
     trainingTime = 0;
@@ -24,19 +25,28 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //set Limits function
     function setLimits () {
-        ftp = ftpInput.value;
-        hrMax = hrMaxInput.value;
-        limitType = limitForm.chosenLimitType.value;     
+        ftp = ftpInput.value;        
+        limitType = limitForm.chosenLimitType.value;
+        if (limitForm.doNotKnowMyHrMax.checked) {
+            ageInput.style.display = 'flex';
+        } else {
+            ageInput.style.display = 'none';
+        }
+        if (limitForm.doNotKnowMyHrMax.checked) {
+            hrMax = 220 - limitForm.age.value;
+        } else {
+            hrMax = limitForm.hrMax.value;
+        } 
         if (training.length > 0) {
             renderExercisesTimelines(); //update exercises
         }
-        console.log(ftp, hrMax, limitType)
+        console.log(limitType)                
     }
     
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
-        let exercise = new Exercise(currentExerciseId, '', 0, 'minutes', 'power', 0, 0, 0, 0, '');
+        let exercise = new Exercise(currentExerciseId, '', 0, 'minutes', 0, 0, 0, 0, '');
         training.push(exercise);        
         addExerciseForm(currentExerciseId); //adds exercise from
         addExerciseTimeline(currentExerciseId); //add exercise Timeline
@@ -78,7 +88,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const durationLegend = document.createElement('legend');
         durationLegend.innerText = 'Duration';
         durationFieldset.appendChild(durationLegend);
-
         const durationInputContainer = document.createElement('div');
         durationInputContainer.classList.add('duration-input-container');
         durationFieldset.appendChild(durationInputContainer);
@@ -254,6 +263,35 @@ document.addEventListener('DOMContentLoaded', ()=> {
         exercisesForms.push(form);             
     }
 
+    //limit zones template
+    class PowerZones {
+        constructor(ftp) {
+            this.first = [0, Math.floor(ftp * 0.55), 'Active recovery'];
+            this.second = [Math.floor(ftp * 0.55), Math.floor(ftp * 0.75), 'Aerobic treshold'];
+            this.third = [Math.floor(ftp * 0.75), Math.floor(ftp * 0.9), 'Tempo'];
+            this.fourth = [Math.floor(ftp * 0.9), Math.floor(ftp * 1.05), 'Lactate Treshold'];
+            this.fifth = [Math.floor(ftp * 1.05), Math.floor(ftp * 1.2), 'Aerobic capacity'];
+            this.sixth = [Math.floor(ftp * 1.2), Math.floor(ftp * 1.5), 'Anaerobic capatiy'];
+            this.sixth = [Math.floor(ftp * 1.5), Infinity, 'Neuromuscular'];
+        }
+    }
+    
+
+    //exercise template
+    class Exercise {
+        constructor(id, name, duration, durationUnit, lowerLimit, upperLimit, lowerCadenceLimit, upperCadenceLimit, notes) {
+            this.id = id;
+            this.exerciseName = name;
+            this.duration = duration;
+            this.durationUnit = durationUnit;            
+            this.lowerLimit = lowerLimit;
+            this.upperLimit = upperLimit;
+            this.lowerCadenceLimit = lowerCadenceLimit;
+            this.upperCadenceLimit = upperCadenceLimit;            
+            this.notes = notes;
+        }
+    }
+
     //remove exercise
     function removeExercise(e) {
         e.preventDefault();
@@ -313,18 +351,24 @@ document.addEventListener('DOMContentLoaded', ()=> {
             
         })
         //counting div height
+
+        //if limits based on power
         let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {            
             return Math.max(prevValue, currentValue.upperLimit);            
-        }, -1) //looking for max limit value
-        console.log('reference value ', exercisesTimelineHeightReferenceValue)
+        }, -1) //looking for max limit value        
         //setting divs height and bacground color
         exercisesTimelines.forEach((element, index) => {            
             element.style.height = Math.round(training[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
-            element.style.backgroundImage =
             //pick bgcolor corresponding to training zone
-            //if ()
-            'linear-gradient(to top, ' + exerciseBgColor + ' 0%,' + exerciseBgColor + ' '  + (training[index].lowerLimit / training[index].upperLimit *100) +
-             '%, grey ' + (training[index].lowerLimit / training[index].upperLimit *100) + '%, grey 100%';
+            console.log(ftp)
+            if (ftp > 0) {   ///if user defined his ftp we color the divs
+                console.log('> 0')
+                element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05 ) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 1000) + '%)';
+            } else {
+                
+                element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue 16%, lightgreen 16%, lightgreen 33%, lightyellow 33%, lightyellow 49%, orange 49%, orange 66%, pink 66%, pink 83%, red 83%, red 99%, purple 99%, purple 160%)';
+            }
+            
              //when limits exist draw border
             if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration) {
             element.style.border = '1px solid black'; 
@@ -332,20 +376,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
         })
     }
 
-    //exercise template
-    class Exercise {
-        constructor(id, name, duration, durationUnit, lowerLimit, upperLimit, lowerCadenceLimit, upperCadenceLimit, notes) {
-            this.id = id;
-            this.exerciseName = name;
-            this.duration = duration;
-            this.durationUnit = durationUnit;            
-            this.lowerLimit = lowerLimit;
-            this.upperLimit = upperLimit;
-            this.lowerCadenceLimit = lowerCadenceLimit;
-            this.upperCadenceLimit = upperCadenceLimit;            
-            this.notes = notes;
-        }
-    }
     
     
 })

@@ -51,17 +51,21 @@ body {
 }
 
 .limits-container {
-    width: 150px;
+    width: 270px;
     padding: 5px;
     display: flex;
     flex-direction: column;
     border: 1px solid black;
 }
 
-.ftp-radio-input-container, .hrMax-radio-input-container, .ftp-limit-container, .hrMax-limit-container {
+.doNotKnowMyHrMax-container, .ftp-radio-input-container, .hrMax-radio-input-container, .ftp-limit-container, .hrMax-limit-container, .age-container {
     display: flex;
     justify-content: space-between;
     margin: 5px 0;
+}
+
+.age-container {
+    display: none;
 }
 
 .ftp, .hrMax {
