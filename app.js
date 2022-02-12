@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         if (training.length > 0) {
             renderExercisesTimelines(); //update exercises
         }
-        console.log(limitType)                
+        console.log(limitType)                        
     }
     
     //add new exercise from and push exercise object to the training array
@@ -148,37 +148,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
         limitTypeInputsContainer.classList.add('limit-type-inputs');
         limitsFieldset.appendChild(limitTypeInputsContainer);
         //power
-        // const limitPowerTypeInputContainer = document.createElement('div');
-        // limitPowerTypeInputContainer.classList.add('limit-power-type-input-container');        
-        // limitTypeInputsContainer.appendChild(limitPowerTypeInputContainer);
-        // const powerLabel = document.createElement('label');
-        // powerLabel.setAttribute('for', 'power');
-        // powerLabel.innerText = 'Power';
-        // limitPowerTypeInputContainer.appendChild(powerLabel);
-        // const powerInput = document.createElement('input');
-        // powerInput.setAttribute('name', 'limitType');
-        // powerInput.setAttribute('id', 'power' + currentExerciseId);
-        // powerInput.setAttribute('value', 'power');
-        // powerInput.setAttribute('type', 'radio');
-        // powerInput.setAttribute('checked', true);
-        // powerInput.classList.add('number-input');
-        // limitPowerTypeInputContainer.appendChild(powerInput);
-        // //hr
-        // const limitHrTypeInputContainer = document.createElement('div');
-        // limitHrTypeInputContainer.classList.add('limit-hr-type-input-container');
-        // limitTypeInputsContainer.appendChild(limitHrTypeInputContainer);
-        // const hrLabel = document.createElement('label');
-        // hrLabel.setAttribute('for', 'hr');
-        // hrLabel.innerText = 'HR';
-        // limitHrTypeInputContainer.appendChild(hrLabel);
-        // const hrInput = document.createElement('input');
-        // hrInput.setAttribute('name', 'limitType');
-        // hrInput.setAttribute('id', 'hr' + currentExerciseId);
-        // hrInput.setAttribute('value', 'hr');
-        // hrInput.setAttribute('type', 'radio');        
-        // hrInput.classList.add('number-input');
-        // limitHrTypeInputContainer.appendChild(hrInput);
-
         //inputs
         //lower limit
         const lowerLimitInputContainer = document.createElement('div');
@@ -346,34 +315,37 @@ document.addEventListener('DOMContentLoaded', ()=> {
             } else {
                 currentExerciseDuration = training[index].duration * 3; //multiply for better visibility 
             }
-            element.style.width = Math.round(currentExerciseDuration / trainingTime * 10000) / 100 + '%';
-            console.log(element);
-            
+            element.style.width = Math.round(currentExerciseDuration / trainingTime * 10000) / 100 + '%';    
         })
-        //counting div height
 
-        //if limits based on power
-        let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {            
-            return Math.max(prevValue, currentValue.upperLimit);            
-        }, -1) //looking for max limit value        
-        //setting divs height and bacground color
-        exercisesTimelines.forEach((element, index) => {            
-            element.style.height = Math.round(training[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
-            //pick bgcolor corresponding to training zone
-            console.log(ftp)
-            if (ftp > 0) {   ///if user defined his ftp we color the divs
-                console.log('> 0')
-                element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05 ) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 1000) + '%)';
-            } else {
-                
-                element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue 16%, lightgreen 16%, lightgreen 33%, lightyellow 33%, lightyellow 49%, orange 49%, orange 66%, pink 66%, pink 83%, red 83%, red 99%, purple 99%, purple 160%)';
-            }
-            
-             //when limits exist draw border
-            if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration) {
-            element.style.border = '1px solid black'; 
-            }                        
-        })
+        //counting div height
+        if (limitType === 'hrMax') {   ///if limits based on hrMax
+            exercisesTimelines.forEach((element, index) => {
+                element.style.height = Math.round(training[index].upperLimit / hrMax * 10000) / 100 + '%';
+                //when limits exist draw border
+                if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration) {
+                    element.style.border = '1px solid black'; 
+                }
+            })
+        } else if (limitType === 'ftp') {   //if limits based on power
+            let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {            
+                return Math.max(prevValue, currentValue.upperLimit);            
+            }, -1) //looking for max limit value        
+            //setting divs height and bacground color
+            exercisesTimelines.forEach((element, index) => {            
+                element.style.height = Math.round(training[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
+                //pick bgcolor corresponding to training zone            
+                if (ftp > 0) {   ///if user defined his ftp we color the divs
+                    element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05 ) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 1000) + '%)';
+                } else {                
+                    element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(training[index].lowerLimit / training[index].upperLimit * 100) + '%, grey ' + Math.floor(training[index].lowerLimit / training[index].upperLimit * 100) + '%, grey 100%)';
+                }            
+                 //when limits exist draw border
+                if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration) {
+                element.style.border = '1px solid black'; 
+                }                        
+            })
+        }      
     }
 
     
