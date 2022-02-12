@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesTimelines = [];    
     let ftp = 0;
     let hrMax = 0;
-    let limitType = '';
+    let limitType = 'ftp';
     const exercisesBgColors = [
         'lightblue', 'lightgreen', 'green', 'yellow', 'orange', 'red', 'purple'
     ]
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
-        let exercise = new Exercise(currentExerciseId, '', 0, 'minutes', 0, 0, 0, 0, '');
+        let exercise = new Exercise(currentExerciseId, '', undefined, 'minutes', undefined, undefined, undefined, undefined, '');
         training.push(exercise);        
         addExerciseForm(currentExerciseId); //adds exercise from
         addExerciseTimeline(currentExerciseId); //add exercise Timeline
@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         durationInput.setAttribute('name', 'duration');
         durationInput.setAttribute('type', 'number');
         durationInput.setAttribute('id', 'duration' + currentExerciseId);
+        durationInput.setAttribute('min', '0');
         durationInput.classList.add('number-input');
         durationInputContainer.appendChild(durationInput);
         //duration units
@@ -160,7 +161,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const lowerLimitInput = document.createElement('input');
         lowerLimitInput.setAttribute('name', 'lowerLimit');        
         lowerLimitInput.setAttribute('type', 'number');
-        lowerLimitInput.setAttribute('id', 'lowerLimit' + currentExerciseId);        
+        lowerLimitInput.setAttribute('id', 'lowerLimit' + currentExerciseId);
+        lowerLimitInput.setAttribute('min', '0');        
         lowerLimitInput.classList.add('number-input');
         lowerLimitInputContainer.appendChild(lowerLimitInput);
         //upper limit
@@ -174,7 +176,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const upperLimitInput = document.createElement('input');
         upperLimitInput.setAttribute('name', 'upperLimit');        
         upperLimitInput.setAttribute('type', 'number');
-        upperLimitInput.setAttribute('id', 'upperLimit' + currentExerciseId);       
+        upperLimitInput.setAttribute('id', 'upperLimit' + currentExerciseId);
+        upperLimitInput.setAttribute('min', '0');       
         upperLimitInput.classList.add('number-input');
         upperLimitInputContainer.appendChild(upperLimitInput);
 
@@ -195,7 +198,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const cadenceLowerLimitInput = document.createElement('input');
         cadenceLowerLimitInput.setAttribute('name', 'lowerCadenceLimit');        
         cadenceLowerLimitInput.setAttribute('type', 'number');
-        cadenceLowerLimitInput.setAttribute('id', 'lowerCadenceLimit' + currentExerciseId);         
+        cadenceLowerLimitInput.setAttribute('id', 'lowerCadenceLimit' + currentExerciseId);  
+        cadenceLowerLimitInput.setAttribute('min', '0');  
+        cadenceLowerLimitInput.setAttribute('max', '300');     
         cadenceLowerLimitInput.classList.add('number-input');
         lowerCadenceLimitInputContainer.appendChild(cadenceLowerLimitInput);
         //cadence upper limit
@@ -209,9 +214,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const cadenceUpperLimitInput = document.createElement('input');
         cadenceUpperLimitInput.setAttribute('name', 'upperCadenceLimit');        
         cadenceUpperLimitInput.setAttribute('type', 'number');
-        cadenceUpperLimitInput.setAttribute('id', 'upperCadenceLimit' + currentExerciseId);       
+        cadenceUpperLimitInput.setAttribute('id', 'upperCadenceLimit' + currentExerciseId);
+        cadenceUpperLimitInput.setAttribute('min', '0');
+        cadenceUpperLimitInput.setAttribute('max', '300');       
         cadenceUpperLimitInput.classList.add('number-input');
         upperCadenceLimitInputContainer.appendChild(cadenceUpperLimitInput);
+        
         //notes
         const notesInputContainer = document.createElement('div');
         notesInputContainer.classList.add('notes-input-container');
@@ -278,14 +286,35 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //readForm function
     function readForm(e) {        
-        const exerciseIndex = exercisesForms.indexOf(this);
+        const exerciseIndex = exercisesForms.indexOf(this);      
         if (e.target.name === 'duration' || e.target.name === 'id' ||
         e.target.name === 'lowerLimit' || e.target.name === 'upperLimit' ||
         e.target.name === 'lowerCadenceLimit' || e.target.name === 'upperCadenceLimit') {
-            training[exerciseIndex][e.target.name] = parseInt(e.target.value);            
+            training[exerciseIndex][e.target.name] = parseInt(e.target.value);                        
         } else {
             training[exerciseIndex][e.target.name] = e.target.value;
-        }        
+        }
+        if (e.target.name === 'upperLimit' && e.target.value < training[exerciseIndex]['lowerLimit']) {
+            alert('Upper limit cannot be lower than lower limit!');
+            this.lowerLimit.value = 0;
+            training[exerciseIndex]['lowerLimit'] = 0;
+        }
+        if (e.target.name === 'upperCadenceLimit' && e.target.value < training[exerciseIndex]['lowerCadenceLimit']) {
+            alert('Upper limit cannot be lower than lower limit!');
+            this.lowerCadenceLimit.value = 0;
+            training[exerciseIndex]['lowerCadenceLimit'] = 0;
+        }
+        if (e.target.name === 'lowerLimit' && e.target.value > training[exerciseIndex]['upperLimit']) {
+            alert('Lower limit cannot be higher than upper limit!');
+            e.target.value = 0;
+            training[exerciseIndex]['lowerLimit'] = 0;
+        }
+        if (e.target.name === 'lowerCadenceLimit' && e.target.value > training[exerciseIndex]['upperCadenceLimit']) {
+            alert('Lower limit cannot be higher than upper limit!');
+            e.target.value = 0;
+            training[exerciseIndex]['lowerCadenceLimit'] = 0;
+        }
+        console.log(training)        
         renderExercisesTimelines();
     }
 
@@ -298,7 +327,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }    
 
     //render Exercises Timelines
-    function renderExercisesTimelines() {        
+    function renderExercisesTimelines() { 
+        console.log(ftp);       
         //count training time
         trainingTime = training.reduce(function (total, current) {
             if (current.durationUnit === 'minutes') {
@@ -321,8 +351,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
         //counting div height
         if (limitType === 'hrMax') {   ///if limits based on hrMax
             exercisesTimelines.forEach((element, index) => {
+                if (training[index].upperLimit > hrMax) {
+                    training[index].upperLimit = hrMax;
+                }
                 element.style.height = Math.round(training[index].upperLimit / hrMax * 10000) / 100 + '%';
-                //when limits exist draw border
+                //when limits exist draw border                
                 if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration) {
                     element.style.border = '1px solid black'; 
                 }
@@ -335,7 +368,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
             exercisesTimelines.forEach((element, index) => {            
                 element.style.height = Math.round(training[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
                 //pick bgcolor corresponding to training zone            
-                if (ftp > 0) {   ///if user defined his ftp we color the divs
+                if (ftp > 1) {   ///if user defined his ftp we color the divs
                     element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05 ) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 1000) + '%)';
                 } else {                
                     element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(training[index].lowerLimit / training[index].upperLimit * 100) + '%, grey ' + Math.floor(training[index].lowerLimit / training[index].upperLimit * 100) + '%, grey 100%)';
