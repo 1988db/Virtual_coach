@@ -37,13 +37,39 @@ document.addEventListener('DOMContentLoaded', ()=> {
         } else {
             ageInput.style.display = 'none';
         }
+        if (limitForm.age.value < 0) {
+            alert('Age value must be bigger than 0');
+            limitForm.age.value = 1;
+        }
+        if (limitForm.age.value > 220) {
+            alert('Are you serious???');
+            limitForm.age.value = 1;
+        }
         if (limitForm.doNotKnowMyHrMax.checked) {
             hrMax = 220 - limitForm.age.value;
         }
         if (training.length > 0) {
             renderExercisesTimelines(); //update exercises
         }
-        console.log(limitType)                        
+        if (exercisesForms.length > 0) { //if limits based od hrMax exercises limits cant go above hrMax
+            exercisesForms.forEach(element => {
+                if (element.upperLimit.value > hrMax) {
+                    element.upperLimit.value = hrMax;
+                }
+                if (element.lowerLimit.value > hrMax) {
+                    element.lowerLimit.value = hrMax;
+                } 
+            })
+            training.forEach(element => {
+                if (element.upperLimit > hrMax) {
+                    element.upperLimit = hrMax;
+                }
+                if (element.lowerLimit > hrMax) {
+                    element.lowerLimit = hrMax;
+                } 
+            })
+        }
+                                        
     }
     
     //add new exercise from and push exercise object to the training array
@@ -288,7 +314,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
 
     //readForm function
-    function readForm(e) {        
+    function readForm(e) {   
+        console.log(hrMax)     
         const exerciseIndex = exercisesForms.indexOf(this);      
         if (e.target.name === 'duration' || e.target.name === 'id' ||
         e.target.name === 'lowerLimit' || e.target.name === 'upperLimit' ||
@@ -307,17 +334,26 @@ document.addEventListener('DOMContentLoaded', ()=> {
             this.lowerCadenceLimit.value = 0;
             training[exerciseIndex]['lowerCadenceLimit'] = 0;
         }
+        if (e.target.name === 'upperLimit' && limitType === 'hrMax' && e.target.value > hrMax) {
+            alert('You cannot go above your HrMax!');
+            e.target.value = hrMax;
+            training[exerciseIndex]["upperLimit"] = hrMax;
+        }
         if (e.target.name === 'lowerLimit' && e.target.value > training[exerciseIndex]['upperLimit']) {
             alert('Lower limit cannot be higher than upper limit!');
             e.target.value = 0;
             training[exerciseIndex]['lowerLimit'] = 0;
         }
+        if (e.target.name === 'lowerLimit' && limitType === 'hrMax' && e.target.value > hrMax) {
+            alert('You cannot go above your HrMax!');
+            e.target.value = hrMax;
+            training[exerciseIndex]["lowerLimit"] = hrMax;
+        }
         if (e.target.name === 'lowerCadenceLimit' && e.target.value > training[exerciseIndex]['upperCadenceLimit']) {
             alert('Lower limit cannot be higher than upper limit!');
             e.target.value = 0;
             training[exerciseIndex]['lowerCadenceLimit'] = 0;
-        }
-        console.log(training)        
+        }               
         renderExercisesTimelines();
     }
 
@@ -355,10 +391,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
         if (limitType === 'hrMax') {   ///if limits based on hrMax
             exercisesTimelines.forEach((element, index) => {                
                 element.style.height = Math.round(training[index].upperLimit / hrMax * 10000) / 100 + '%';
+                if (training[index].upperLimit > hrMax) {
+                    element.style.height = '100%';
+                }
                 //when limits exist draw border                               
                 if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration > 0) {
-                    element.style.border = '1px solid black'; 
-                    console.log('waruenk') 
+                    element.style.border = '1px solid black';
                 }
             })
         } else if (limitType === 'ftp') {   //if limits based on power
