@@ -47,24 +47,37 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }
         if (limitForm.doNotKnowMyHrMax.checked) {
             hrMax = 220 - limitForm.age.value;
+            limitForm.hrMax.value = hrMax;
         }
         if (training.length > 0) {
             renderExercisesTimelines(); //update exercises
         }
         if (exercisesForms.length > 0) { //if limits based od hrMax exercises limits cant go above hrMax
             exercisesForms.forEach(element => {
-                if (element.upperLimit.value > hrMax) {
+                if (element.upperLimit.value > hrMax && limitType === 'hrMax') {
                     element.upperLimit.value = hrMax;
                 }
-                if (element.lowerLimit.value > hrMax) {
+                if (element.lowerLimit.value > hrMax && limitType === 'hrMax') {
                     element.lowerLimit.value = hrMax;
-                } 
+                }
+                if (limitForm.doNotKnowMyHrMax.checked && limitType === 'hrMax' && (220 - limitForm.age.value) < element.upperLimit.value) {
+                    element.upperLimit.value = hrMax;
+                }
+                if (limitForm.doNotKnowMyHrMax.checked && limitType === 'hrMax' && (220 - limitForm.age.value) < element.lowerLimit.value) {
+                    element.lowerLimit.value = hrMax;
+                }
             })
             training.forEach(element => {
-                if (element.upperLimit > hrMax) {
+                if (element.upperLimit && limitType === 'hrMax' > hrMax) {
                     element.upperLimit = hrMax;
                 }
-                if (element.lowerLimit > hrMax) {
+                if (element.lowerLimit && limitType === 'hrMax' > hrMax) {
+                    element.lowerLimit = hrMax;
+                }
+                if (limitForm.doNotKnowMyHrMax.checked && limitType === 'hrMax' && (220 - limitForm.age) < element.upperLimit) {
+                    element.upperLimit = hrMax;
+                }
+                if (limitForm.doNotKnowMyHrMax.checked && limitType === 'hrMax' && (220 - limitForm.age) < element.lowerLimit) {
                     element.lowerLimit = hrMax;
                 } 
             })
@@ -394,6 +407,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 if (training[index].upperLimit > hrMax) {
                     element.style.height = '100%';
                 }
+                //color divs
+                element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.6) + '%, lightgreen ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.6) + '%, lightgreen '  + Math.floor(hrMax / training[index].upperLimit * 100 * 0.7) + '%, lightyellow ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.7) + '%, lightyellow '  + Math.floor(hrMax / training[index].upperLimit * 100 * 0.8) + '%, orange ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.8) + '%, orange ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.9) + '%, red ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.9) + '%, red 100%)';
                 //when limits exist draw border                               
                 if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration > 0) {
                     element.style.border = '1px solid black';
