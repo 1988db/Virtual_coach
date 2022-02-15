@@ -23,7 +23,9 @@ body {
 .show-planner {
     display: none;
     width: 200px;
-    height: 40px;    
+    height: 40px;
+    opacity: 0;
+    transition: opacity 0.7s;    
 }
 
 .main-container {
@@ -34,6 +36,8 @@ body {
 .planner-container {
     display: flex;
     flex-direction: column;
+    opacity: 1;
+    transition: opacity 1s;        
 }
 
 .planner-header {

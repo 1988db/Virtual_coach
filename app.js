@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', ()=> {
-    const showPlannerBtn = document.querySelector('.show-planner');    
+    const showPlannerBtn = document.querySelector('.show-planner');
+    const trainBtn = document.querySelector('.train-btn');    
     const plannerContainer = document.querySelector('.planner-container');
     const addExerciseBtn = document.querySelector('.add-exercise-btn');
     const limitForm = document.getElementById('limits');    
@@ -7,6 +8,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const hrMaxInput = document.getElementById('hrMax');
     const ageInput = document.querySelector('.age-container');
     const exercisesContainer = document.querySelector('.exercises-container');
+    const trainingTimeDisplay = document.querySelector('.training-duration')
     let currentExerciseId = 0;
     trainingTime = 0;
     const exercisesTimeline = document.querySelector('.timeline-container')
@@ -18,7 +20,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
     let limitType = 'ftp';
     const exercisesBgColors = [
         'lightblue', 'lightgreen', 'green', 'yellow', 'orange', 'red', 'purple'
-    ]
+    ];
+
+    //show exercises planner
+    showPlannerBtn.addEventListener('click', showPlanner);
+
+    //hide exercises planner and start training
+    trainBtn.addEventListener('click', train);
 
     //take data from limits form
     limitForm.addEventListener('change', setLimits);
@@ -309,6 +317,33 @@ document.addEventListener('DOMContentLoaded', ()=> {
             this.upperCadenceLimit = upperCadenceLimit;            
             this.notes = notes;
         }
+    }
+
+    //show exercises planner
+    function showPlanner() {
+        console.log(plannerContainer.style.display)
+        showPlannerBtn.style.display = 'none';
+        if (plannerContainer.style.display != 'flex') { // if we press Open Planner button while planner is disappearing
+            setTimeout(()=> {
+                plannerContainer.style.display = 'flex';
+                plannerContainer.style.opacity = '0';
+                setTimeout(()=> plannerContainer.style.opacity = '1', 1000);
+            }, 1000)
+        } else {
+            plannerContainer.style.display = 'flex';
+            plannerContainer.style.opacity = '0';
+            setTimeout(()=> plannerContainer.style.opacity = '1', 1000);
+        }
+        
+    }
+
+    //train function
+    function train() {       
+       
+        plannerContainer.style.opacity = '0';        
+        showPlannerBtn.style.display = 'block';
+        setTimeout(()=> showPlannerBtn.style.opacity = '1', 1)
+        setTimeout(()=>  plannerContainer.style.display = 'none', 999)
     }
 
     //remove exercise
