@@ -8,13 +8,15 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const hrMaxInput = document.getElementById('hrMax');
     const ageInput = document.querySelector('.age-container');
     const exercisesContainer = document.querySelector('.exercises-container');
-    const trainingTimeDisplay = document.querySelector('.training-duration')
+    const trainingTimeDisplay = document.querySelector('.training-duration');
+    const displayContainer = document.querySelector('.display-container');
     let currentExerciseId = 0;
     trainingTime = 0;
-    const exercisesTimeline = document.querySelector('.timeline-container')
+    const exercisesTimeline = document.querySelector('.timeline-container');
     const training = [];
     const exercisesForms = [];
-    const exercisesTimelines = [];    
+    const exercisesTimelines = [];
+    const exercisesTimelineArr = [];    
     let ftp = 0;
     let hrMax = 185;
     let limitType = 'ftp';
@@ -321,9 +323,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //show exercises planner
     function showPlanner() {
-        console.log(plannerContainer.style.display)
         showPlannerBtn.style.display = 'none';
-        if (plannerContainer.style.display != 'flex') { // if we press Open Planner button while planner is disappearing
+        displayContainer.style.display = 'none';        
+        if (plannerContainer.style.display === 'flex' || plannerContainer.style.display === '') { // if we press Open Planner button while planner is disappearing
             setTimeout(()=> {
                 plannerContainer.style.display = 'flex';
                 plannerContainer.style.opacity = '0';
@@ -332,18 +334,31 @@ document.addEventListener('DOMContentLoaded', ()=> {
         } else {
             plannerContainer.style.display = 'flex';
             plannerContainer.style.opacity = '0';
-            setTimeout(()=> plannerContainer.style.opacity = '1', 1000);
+            setTimeout(()=> plannerContainer.style.opacity = '1', 1);
         }
-        
+        if (exercisesTimelineArr.length > 0) {
+            console.log('deleted')
+            displayContainer.removeChild(exercisesTimelineArr[0]);
+            exercisesTimelineArr.pop();
+        }
     }
 
     //train function
     function train() {       
-       
         plannerContainer.style.opacity = '0';        
         showPlannerBtn.style.display = 'block';
-        setTimeout(()=> showPlannerBtn.style.opacity = '1', 1)
-        setTimeout(()=>  plannerContainer.style.display = 'none', 999)
+        setTimeout(()=> showPlannerBtn.style.opacity = '1', 1);
+        setTimeout(()=>  plannerContainer.style.display = 'none', 999);
+        displayContainer.style.display = 'flex';
+        displayContainer.style.opacity = '0';
+        setTimeout(()=> displayContainer.style.opacity = '1', 999);
+        if (training.length > 0) {
+            const clonedExerciesTimeline = exercisesTimeline.cloneNode(true);
+            console.log(clonedExerciesTimeline)
+            displayContainer.appendChild(clonedExerciesTimeline);
+            exercisesTimelineArr.push(clonedExerciesTimeline);
+            console.log(exercisesTimelineArr)
+        }
     }
 
     //remove exercise
@@ -356,14 +371,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
         exercisesTimelines.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise timeline div from array
         exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form
         const exerciseTimelineToRemove = exercisesTimeline.querySelector('#exeTimeline' + e.target.dataset.id);
-        exercisesTimeline.removeChild(exerciseTimelineToRemove); //remove exercise timeline
-        
-        renderExercisesTimelines()               
+        exercisesTimeline.removeChild(exerciseTimelineToRemove); //remove exercise timeline        
+        renderExercisesTimelines();                       
     }
 
     //readForm function
-    function readForm(e) {   
-        console.log(hrMax)     
+    function readForm(e) {  
         const exerciseIndex = exercisesForms.indexOf(this);      
         if (e.target.name === 'duration' || e.target.name === 'id' ||
         e.target.name === 'lowerLimit' || e.target.name === 'upperLimit' ||
@@ -414,8 +427,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }    
 
     //render Exercises Timelines
-    function renderExercisesTimelines() { 
-        console.log(ftp);       
+    function renderExercisesTimelines() {
         //count training time
         trainingTime = training.reduce(function (total, current) {
             if (current.durationUnit === 'minutes') {

@@ -173,3 +173,8 @@ input[name=notes] {
     background-color: rgb(112, 161, 200);
     background-color: transparent;
 }
+
+.display-container {
+    display: none;
+    transition: opacity 1s;
+}
