@@ -20,7 +20,7 @@ body {
     padding-left: 10px;
 }
 
-.show-planner {
+.show-planner, .start-training {
     display: none;
     width: 200px;
     height: 40px;
@@ -177,4 +177,5 @@ input[name=notes] {
 .display-container {
     display: none;
     transition: opacity 1s;
+    flex-direction: column;
 }

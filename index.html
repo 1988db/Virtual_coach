@@ -11,6 +11,7 @@
 <body>
     <div class="logo">Virtual coach</div>
     <button class="show-planner">Open planner</button>
+    <button class="start-training">Start</button>
     <div class="main-container">                
         <div class="planner-container">
             <div class="planner-header"><h2>Set your exercises</h2></div>
@@ -94,7 +95,35 @@
           
         </div>
         <div class="display-container">
-            <h2 class="training-duration">Duration: <span id="main-timer"></span></h2>
+            <div class="first-row">
+                <h2 class="training-duration">Duration: <span id="main-timer"></span></h2>
+            </div>
+            <div class="second-row">
+                <h2 class="current-exe-time">
+                    <span class="current-exe-time"></span>
+                    <span class="current-exe-time-left"></span>
+                </h2>
+            </div>
+            <div class="third-row">
+                <h2 class="current-exe-limits">
+                    <span class="current-exe-limits"></span>
+                    <span class="current-exe-candence-limits"></span>
+                </h2>
+            </div>
+            <div class="fourth-row">
+                <h2 class="current-notes"></h2>
+            </div>
+            <div class="fifth-row">
+                <h2 class="comming-next">Comming next</h2>
+            </div>
+            <div class="sixth-row">
+                <h3 class="next-exe">
+                    <span class="next-exe-time"></span>
+                    <span class="next-exe-limits"></span>
+                    <span class="next-exe-cadence-limits"></span>
+                    <span class="next-exe-notes"></span>
+                </h3>
+            </div>            
         </div>
     </div>    
 </body>

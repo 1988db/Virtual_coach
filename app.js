@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', ()=> {
     const showPlannerBtn = document.querySelector('.show-planner');
+    const startTrainingBtn = document.querySelector('.start-training');
     const trainBtn = document.querySelector('.train-btn');    
     const plannerContainer = document.querySelector('.planner-container');
     const addExerciseBtn = document.querySelector('.add-exercise-btn');
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     let currentExerciseId = 0;
     trainingTime = 0;
     const exercisesTimeline = document.querySelector('.timeline-container');
+    const exercisesTimelineContainer = displayContainer.querySelector('.sixth-row');
     const training = [];
     const exercisesForms = [];
     const exercisesTimelines = [];
@@ -324,6 +326,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //show exercises planner
     function showPlanner() {
         showPlannerBtn.style.display = 'none';
+        startTrainingBtn.style.display = 'none';
         displayContainer.style.display = 'none';        
         if (plannerContainer.style.display === 'flex' || plannerContainer.style.display === '') { // if we press Open Planner button while planner is disappearing
             setTimeout(()=> {
@@ -338,7 +341,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }
         if (exercisesTimelineArr.length > 0) {
             console.log('deleted')
-            displayContainer.removeChild(exercisesTimelineArr[0]);
+            exercisesTimelineContainer.removeChild(exercisesTimelineArr[0]);
             exercisesTimelineArr.pop();
         }
     }
@@ -346,8 +349,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //train function
     function train() {       
         plannerContainer.style.opacity = '0';        
-        showPlannerBtn.style.display = 'block';
-        setTimeout(()=> showPlannerBtn.style.opacity = '1', 1);
+        showPlannerBtn.style.display = 'inline-block';
+        startTrainingBtn.style.display = 'inline-block';
+        setTimeout(()=> {
+            showPlannerBtn.style.opacity = '1';
+            startTrainingBtn.style.opacity = '1';
+        }, 1);
         setTimeout(()=>  plannerContainer.style.display = 'none', 999);
         displayContainer.style.display = 'flex';
         displayContainer.style.opacity = '0';
@@ -355,7 +362,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         if (training.length > 0) {
             const clonedExerciesTimeline = exercisesTimeline.cloneNode(true);
             console.log(clonedExerciesTimeline)
-            displayContainer.appendChild(clonedExerciesTimeline);
+            exercisesTimelineContainer.appendChild(clonedExerciesTimeline);
             exercisesTimelineArr.push(clonedExerciesTimeline);
             console.log(exercisesTimelineArr)
         }
