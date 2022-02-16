@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesContainer = document.querySelector('.exercises-container');
     const trainingTimeDisplay = document.querySelector('.training-duration');
     const displayContainer = document.querySelector('.display-container');
+
     let currentExerciseId = 0;
     trainingTime = 0;
     const exercisesTimeline = document.querySelector('.timeline-container');
@@ -31,6 +32,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //hide exercises planner and start training
     trainBtn.addEventListener('click', train);
+
+    //start training
+    startTrainingBtn.addEventListener('click', startTraining);
 
     //take data from limits form
     limitForm.addEventListener('change', setLimits);
@@ -100,7 +104,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
-        let exercise = new Exercise(currentExerciseId, '', undefined, 'minutes', undefined, undefined, undefined, undefined, '');
+        let exercise = new Exercise(currentExerciseId, '', 0, 'minutes', 0, 0, 0, 0, '');
         training.push(exercise);        
         addExerciseForm(currentExerciseId); //adds exercise from
         addExerciseTimeline(currentExerciseId); //add exercise Timeline
@@ -203,22 +207,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         limitTypeInputsContainer.classList.add('limit-type-inputs');
         limitsFieldset.appendChild(limitTypeInputsContainer);
         //power
-        //inputs
-        //lower limit
-        const lowerLimitInputContainer = document.createElement('div');
-        lowerLimitInputContainer.classList.add('lower-limit-input-container');
-        limitsFieldset.appendChild(lowerLimitInputContainer);
-        const lowerLimitLabel = document.createElement('label');
-        lowerLimitLabel.setAttribute('for', 'lowerLimit');
-        lowerLimitLabel.innerText = 'Lower limit';
-        lowerLimitInputContainer.appendChild(lowerLimitLabel);
-        const lowerLimitInput = document.createElement('input');
-        lowerLimitInput.setAttribute('name', 'lowerLimit');        
-        lowerLimitInput.setAttribute('type', 'number');
-        lowerLimitInput.setAttribute('id', 'lowerLimit' + currentExerciseId);
-        lowerLimitInput.setAttribute('min', '0');        
-        lowerLimitInput.classList.add('number-input');
-        lowerLimitInputContainer.appendChild(lowerLimitInput);
+        //inputs        
         //upper limit
         const upperLimitInputContainer = document.createElement('div');
         upperLimitInputContainer.classList.add('upper-limit-input-container');
@@ -234,29 +223,28 @@ document.addEventListener('DOMContentLoaded', ()=> {
         upperLimitInput.setAttribute('min', '0');       
         upperLimitInput.classList.add('number-input');
         upperLimitInputContainer.appendChild(upperLimitInput);
+        //lower limit
+        const lowerLimitInputContainer = document.createElement('div');
+        lowerLimitInputContainer.classList.add('lower-limit-input-container');
+        limitsFieldset.appendChild(lowerLimitInputContainer);
+        const lowerLimitLabel = document.createElement('label');
+        lowerLimitLabel.setAttribute('for', 'lowerLimit');
+        lowerLimitLabel.innerText = 'Lower limit';
+        lowerLimitInputContainer.appendChild(lowerLimitLabel);
+        const lowerLimitInput = document.createElement('input');
+        lowerLimitInput.setAttribute('name', 'lowerLimit');        
+        lowerLimitInput.setAttribute('type', 'number');
+        lowerLimitInput.setAttribute('id', 'lowerLimit' + currentExerciseId);
+        lowerLimitInput.setAttribute('min', '0');        
+        lowerLimitInput.classList.add('number-input');
+        lowerLimitInputContainer.appendChild(lowerLimitInput);
 
         //cadence
         const cadenceFieldset = document.createElement('fieldset');
         form.appendChild(cadenceFieldset);
         const cadenceLegend = document.createElement('legend');
         cadenceLegend.innerText = 'Cadence limits';
-        cadenceFieldset.appendChild(cadenceLegend);
-        //cadence lower limit
-        const lowerCadenceLimitInputContainer = document.createElement('div');
-        lowerCadenceLimitInputContainer.classList.add('lower-cadence-limit-input-container');
-        cadenceFieldset.appendChild(lowerCadenceLimitInputContainer);
-        const cadenceLowerLimitLabel = document.createElement('label');
-        cadenceLowerLimitLabel.setAttribute('for', 'lowerCadenceLimit');
-        cadenceLowerLimitLabel.innerText = 'Lower RPM limit';
-        lowerCadenceLimitInputContainer.appendChild(cadenceLowerLimitLabel);
-        const cadenceLowerLimitInput = document.createElement('input');
-        cadenceLowerLimitInput.setAttribute('name', 'lowerCadenceLimit');        
-        cadenceLowerLimitInput.setAttribute('type', 'number');
-        cadenceLowerLimitInput.setAttribute('id', 'lowerCadenceLimit' + currentExerciseId);  
-        cadenceLowerLimitInput.setAttribute('min', '0');  
-        cadenceLowerLimitInput.setAttribute('max', '300');     
-        cadenceLowerLimitInput.classList.add('number-input');
-        lowerCadenceLimitInputContainer.appendChild(cadenceLowerLimitInput);
+        cadenceFieldset.appendChild(cadenceLegend);        
         //cadence upper limit
         const upperCadenceLimitInputContainer = document.createElement('div');
         upperCadenceLimitInputContainer.classList.add('upper-cadence-limit-input-container');
@@ -273,6 +261,22 @@ document.addEventListener('DOMContentLoaded', ()=> {
         cadenceUpperLimitInput.setAttribute('max', '300');       
         cadenceUpperLimitInput.classList.add('number-input');
         upperCadenceLimitInputContainer.appendChild(cadenceUpperLimitInput);
+        //cadence lower limit
+        const lowerCadenceLimitInputContainer = document.createElement('div');
+        lowerCadenceLimitInputContainer.classList.add('lower-cadence-limit-input-container');
+        cadenceFieldset.appendChild(lowerCadenceLimitInputContainer);
+        const cadenceLowerLimitLabel = document.createElement('label');
+        cadenceLowerLimitLabel.setAttribute('for', 'lowerCadenceLimit');
+        cadenceLowerLimitLabel.innerText = 'Lower RPM limit';
+        lowerCadenceLimitInputContainer.appendChild(cadenceLowerLimitLabel);
+        const cadenceLowerLimitInput = document.createElement('input');
+        cadenceLowerLimitInput.setAttribute('name', 'lowerCadenceLimit');        
+        cadenceLowerLimitInput.setAttribute('type', 'number');
+        cadenceLowerLimitInput.setAttribute('id', 'lowerCadenceLimit' + currentExerciseId);  
+        cadenceLowerLimitInput.setAttribute('min', '0');  
+        cadenceLowerLimitInput.setAttribute('max', '300');     
+        cadenceLowerLimitInput.classList.add('number-input');
+        lowerCadenceLimitInputContainer.appendChild(cadenceLowerLimitInput);
         
         //notes
         const notesInputContainer = document.createElement('div');
@@ -339,8 +343,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
             plannerContainer.style.opacity = '0';
             setTimeout(()=> plannerContainer.style.opacity = '1', 1);
         }
-        if (exercisesTimelineArr.length > 0) {
-            console.log('deleted')
+        if (exercisesTimelineArr.length > 0) {            
             exercisesTimelineContainer.removeChild(exercisesTimelineArr[0]);
             exercisesTimelineArr.pop();
         }
@@ -360,14 +363,17 @@ document.addEventListener('DOMContentLoaded', ()=> {
         displayContainer.style.opacity = '0';
         setTimeout(()=> displayContainer.style.opacity = '1', 999);
         if (training.length > 0) {
-            const clonedExerciesTimeline = exercisesTimeline.cloneNode(true);
-            console.log(clonedExerciesTimeline)
+            const clonedExerciesTimeline = exercisesTimeline.cloneNode(true);            
             exercisesTimelineContainer.appendChild(clonedExerciesTimeline);
-            exercisesTimelineArr.push(clonedExerciesTimeline);
-            console.log(exercisesTimelineArr)
+            exercisesTimelineArr.push(clonedExerciesTimeline);            
         }
     }
 
+    //start training
+    function startTraining() {
+        showPlannerBtn.style.display = 'none';
+
+    }
     //remove exercise
     function removeExercise(e) {
         e.preventDefault();
@@ -469,9 +475,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 }
             })
         } else if (limitType === 'ftp') {   //if limits based on power
-            let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {            
+            let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {          
                 return Math.max(prevValue, currentValue.upperLimit);            
-            }, -1) //looking for max limit value        
+            }, -1)            
+            //looking for max limit value        
             //setting divs height and bacground color
             exercisesTimelines.forEach((element, index) => {            
                 element.style.height = Math.round(training[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
