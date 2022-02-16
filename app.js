@@ -350,23 +350,34 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
 
     //train function
-    function train() {       
-        plannerContainer.style.opacity = '0';        
-        showPlannerBtn.style.display = 'inline-block';
-        startTrainingBtn.style.display = 'inline-block';
-        setTimeout(()=> {
-            showPlannerBtn.style.opacity = '1';
-            startTrainingBtn.style.opacity = '1';
-        }, 1);
-        setTimeout(()=>  plannerContainer.style.display = 'none', 999);
-        displayContainer.style.display = 'flex';
-        displayContainer.style.opacity = '0';
-        setTimeout(()=> displayContainer.style.opacity = '1', 999);
-        if (training.length > 0) {
-            const clonedExerciesTimeline = exercisesTimeline.cloneNode(true);            
-            exercisesTimelineContainer.appendChild(clonedExerciesTimeline);
-            exercisesTimelineArr.push(clonedExerciesTimeline);            
-        }
+    function train() {
+        console.log(training)
+        //check if every exercise has neccessary data
+        if (
+            training.every(element => {
+            return element.duration > 0 && element.lowerLimit > 0 && element.upperLimit > 0
+        }) && training.length > 0
+        ) {
+            plannerContainer.style.opacity = '0';        
+            showPlannerBtn.style.display = 'inline-block';
+            startTrainingBtn.style.display = 'inline-block';
+            setTimeout(()=> {
+                showPlannerBtn.style.opacity = '1';
+                startTrainingBtn.style.opacity = '1';
+            }, 1);
+            setTimeout(()=>  plannerContainer.style.display = 'none', 999);
+            displayContainer.style.display = 'flex';
+            displayContainer.style.opacity = '0';
+            setTimeout(()=> displayContainer.style.opacity = '1', 999);
+            if (training.length > 0) {
+                const clonedExerciesTimeline = exercisesTimeline.cloneNode(true);            
+                exercisesTimelineContainer.appendChild(clonedExerciesTimeline);
+                exercisesTimelineArr.push(clonedExerciesTimeline);            
+            }
+        } else {
+            alert('At least one exercise must be chosen and exercise duration, lower limit and upper limit must be higher than 0')
+        }    
+        
     }
 
     //start training
