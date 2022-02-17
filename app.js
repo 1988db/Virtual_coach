@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
                                         
     }
 
+    //formatting seconds to H:MM:SS
     function getFormatedTrainingTime () {
         let hoursCount = Math.floor(trainingTime/3600);
         let minutesCount = Math.floor(trainingTime % 3600 / 60);
@@ -116,6 +117,22 @@ document.addEventListener('DOMContentLoaded', ()=> {
         return formatedTrainingTime;
     }
     
+    //formatting hundreds of miliseconds to H:MM:SS:0,1MS
+    function getFormatedTrainingTimeFromMs () {
+        let hoursCount = Math.floor(currentTime/6000);
+        let minutesCount = Math.floor(currentTime % 6000 / 600);
+        let secondsCount = Math.floor(currentTime % 600 / 10);
+        let hundredMilisecondsCount = currentTime % 10;
+        if (minutesCount < 10) {
+            minutesCount = '0' + minutesCount;
+        };
+        if (secondsCount < 10) {
+            secondsCount = '0' + secondsCount;
+        };
+        let formatedTrainingTime = hoursCount + ': ' + minutesCount + ': ' + secondsCount + ': ' + hundredMilisecondsCount;
+        return formatedTrainingTime;
+    }
+
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
@@ -417,8 +434,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //training function
     function trainingFunction () {
         currentTime++;
-        trainingTimeDisplay.innerText = 'Training time ' + currentTime;
-        if (currentTime === trainingTime * 10 ) {
+        trainingTimeDisplay.innerText = 'Training time ' + getFormatedTrainingTimeFromMs();
+        if (currentTime === trainingTime * 10 ) { // when training is finished
             clearInterval(IntervalId);
             trainingTimeDisplay.innerText = 'Training time ' + currentTime + ' The End';
             currentTime = 0;
