@@ -13,14 +13,20 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const displayContainer = document.querySelector('.display-container');
     let currentExerciseId = 0;
     let trainingTime = 0;
-    let currentTime = 0;    
+    let currentTime = 0;
+    let currentPosition = 0;    
+    let clonedExerciesTimeline;
+    let currentPositionLine;   
     const exercisesTimeline = document.querySelector('.timeline-container');
     const exercisesTimelineContainer = displayContainer.querySelector('.sixth-row');
     const training = [];
     const exercisesForms = [];
     const exercisesTimelines = [];
-    const exercisesTimelineArr = [];
-    let IntervalId;    
+    const primaryExeTimelineArr = [];
+    const secondaryExeTimelineArr = [];
+    const primaryCurrentTimeLine = [];
+    const secondaryCurrentPositinLine = [];    
+    let intervalId;    
     let ftp = 0;
     let hrMax = 185;
     let limitType = 'ftp';
@@ -375,15 +381,19 @@ document.addEventListener('DOMContentLoaded', ()=> {
             plannerContainer.style.opacity = '0';
             setTimeout(()=> plannerContainer.style.opacity = '1', 1);
         }
-        if (exercisesTimelineArr.length > 0) {            
-            exercisesTimelineContainer.removeChild(exercisesTimelineArr[0]);
-            exercisesTimelineArr.pop();
+        if (secondaryExeTimelineArr.length > 0) {            
+            exercisesTimelineContainer.removeChild(secondaryExeTimelineArr[0]);
+            secondaryExeTimelineArr.pop();
+        }
+        if (secondaryCurrentPositinLine.length > 0) { // remove currentPositionLines when going back to planner
+            for (let i = 0; i < secondaryCurrentPositinLine.length; i ++) {
+                secondaryCurrentPositinLine.pop();
+            }
         }
     }
 
     //train function
-    function train() {
-        console.log(training)
+    function train() {        
         //check if every exercise has neccessary data
         if (
             training.every(element => {
@@ -402,9 +412,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
             displayContainer.style.opacity = '0';
             setTimeout(()=> displayContainer.style.opacity = '1', 999);
             if (training.length > 0) {
-                const clonedExerciesTimeline = exercisesTimeline.cloneNode(true);            
+                clonedExerciesTimeline = exercisesTimeline.cloneNode(true);            
                 exercisesTimelineContainer.appendChild(clonedExerciesTimeline);
-                exercisesTimelineArr.push(clonedExerciesTimeline);               
+                secondaryExeTimelineArr.push(clonedExerciesTimeline);               
                 trainingTimeDisplay.innerText = "Training duration " + getFormatedTrainingTime();                         
             }
         } else {
@@ -414,29 +424,47 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
 
     //start training
-    function startTraining() {
+    function startTraining() {               
         showPlannerBtn.style.display = 'none';
         startTrainingBtn.innerText = 'Pause';
         startTrainingBtn.removeEventListener('click', startTraining);
         startTrainingBtn.addEventListener('click', pause);
-        IntervalId = setInterval(trainingFunction, 100);
+        intervalId = setInterval(trainingFunction, 100);
+        if (secondaryExeTimelineArr.length > 0) {
+            clonedExerciesTimeline.style.position = 'relative';
+            currentPositionLine = document.createElement('div');            
+            secondaryCurrentPositinLine.unshift(currentPositionLine);            
+            if(secondaryCurrentPositinLine.length > 1) {
+                secondaryExeTimelineArr[0].removeChild(secondaryCurrentPositinLine[1]);
+                secondaryCurrentPositinLine.pop();
+            }
+            currentPositionLine.style.position = 'absolute';
+            currentPositionLine.style.left = currentPosition + '%';
+            currentPositionLine.style.height = '100%';
+            currentPositionLine.style.width = '2px';
+            currentPositionLine.style.backgroundColor = 'orangered';
+            secondaryExeTimelineArr[0].appendChild(currentPositionLine);                      
+        }
+        
     }
 
     //pause function
     function pause () {
         showPlannerBtn.style.display = 'inline-block';
-        startTrainingBtn.innerText = 'Start';
+        startTrainingBtn.innerText = 'Start';        
         startTrainingBtn.removeEventListener('click', pause);
         startTrainingBtn.addEventListener('click', startTraining);
-        clearInterval(IntervalId);
+        clearInterval(intervalId);
     }
 
     //training function
     function trainingFunction () {
         currentTime++;
+        currentPosition = currentTime / (trainingTime * 10) * 100;        
+        currentPositionLine.style.left = currentPosition +'%';
         trainingTimeDisplay.innerText = 'Training time ' + getFormatedTrainingTimeFromMs();
         if (currentTime === trainingTime * 10 ) { // when training is finished
-            clearInterval(IntervalId);
+            clearInterval(intervalId);
             trainingTimeDisplay.innerText = 'Training time ' + currentTime + ' The End';
             currentTime = 0;
             showPlannerBtn.style.display = 'inline-block';
