@@ -179,3 +179,8 @@ input[name=notes] {
     transition: opacity 1s;
     flex-direction: column;
 }
+
+
+.first-row {
+    text-align: center;
+}

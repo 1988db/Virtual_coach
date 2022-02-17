@@ -11,15 +11,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesContainer = document.querySelector('.exercises-container');
     const trainingTimeDisplay = document.querySelector('.training-duration');
     const displayContainer = document.querySelector('.display-container');
-
     let currentExerciseId = 0;
-    trainingTime = 0;
+    let trainingTime = 0;
+    let currentTime = 0;    
     const exercisesTimeline = document.querySelector('.timeline-container');
     const exercisesTimelineContainer = displayContainer.querySelector('.sixth-row');
     const training = [];
     const exercisesForms = [];
     const exercisesTimelines = [];
-    const exercisesTimelineArr = [];    
+    const exercisesTimelineArr = [];
+    let IntervalId;    
     let ftp = 0;
     let hrMax = 185;
     let limitType = 'ftp';
@@ -99,6 +100,20 @@ document.addEventListener('DOMContentLoaded', ()=> {
             })
         }
                                         
+    }
+
+    function getFormatedTrainingTime () {
+        let hoursCount = Math.floor(trainingTime/3600);
+        let minutesCount = Math.floor(trainingTime % 3600 / 60);
+        let secondsCount = trainingTime % 60;
+        if (minutesCount < 10) {
+            minutesCount = '0' + minutesCount;
+        };
+        if (secondsCount < 10) {
+            secondsCount = '0' + secondsCount;
+        };
+        let formatedTrainingTime = hoursCount + ': ' + minutesCount + ': ' + secondsCount;
+        return formatedTrainingTime;
     }
     
     //add new exercise from and push exercise object to the training array
@@ -372,7 +387,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
             if (training.length > 0) {
                 const clonedExerciesTimeline = exercisesTimeline.cloneNode(true);            
                 exercisesTimelineContainer.appendChild(clonedExerciesTimeline);
-                exercisesTimelineArr.push(clonedExerciesTimeline);            
+                exercisesTimelineArr.push(clonedExerciesTimeline);               
+                trainingTimeDisplay.innerText = "Training duration " + getFormatedTrainingTime();                         
             }
         } else {
             alert('At least one exercise must be chosen and exercise duration, lower limit and upper limit must be higher than 0')
@@ -383,8 +399,36 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //start training
     function startTraining() {
         showPlannerBtn.style.display = 'none';
-
+        startTrainingBtn.innerText = 'Pause';
+        startTrainingBtn.removeEventListener('click', startTraining);
+        startTrainingBtn.addEventListener('click', pause);
+        IntervalId = setInterval(trainingFunction, 100);
     }
+
+    //pause function
+    function pause () {
+        showPlannerBtn.style.display = 'inline-block';
+        startTrainingBtn.innerText = 'Start';
+        startTrainingBtn.removeEventListener('click', pause);
+        startTrainingBtn.addEventListener('click', startTraining);
+        clearInterval(IntervalId);
+    }
+
+    //training function
+    function trainingFunction () {
+        currentTime++;
+        trainingTimeDisplay.innerText = 'Training time ' + currentTime;
+        if (currentTime === trainingTime * 10 ) {
+            clearInterval(IntervalId);
+            trainingTimeDisplay.innerText = 'Training time ' + currentTime + ' The End';
+            currentTime = 0;
+            showPlannerBtn.style.display = 'inline-block';
+            startTrainingBtn.innerText = 'Start';
+            startTrainingBtn.removeEventListener('click', pause);
+            startTrainingBtn.addEventListener('click', startTraining);
+        }
+    }
+
     //remove exercise
     function removeExercise(e) {
         e.preventDefault();
