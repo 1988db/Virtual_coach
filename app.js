@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const ageInput = document.querySelector('.age-container');
     const exercisesContainer = document.querySelector('.exercises-container');
     const trainingTimeDisplay = document.querySelector('.training-duration');
+    const timeLeftDisplay = document.getElementById('main-countdown')
     const secondRowH2 = document.querySelector('.second-row .current-exe-time');
     const displayContainer = document.querySelector('.display-container');
     const commingNext = document.querySelector('.comming-next');
@@ -146,6 +147,21 @@ document.addEventListener('DOMContentLoaded', ()=> {
         return formatedTrainingTime;
     }
 
+    //show formatted time left
+    function getFormatedTimeLeft () {
+        let hoursCount = Math.floor((trainingTime - currentTime/10)/3600);
+        let minutesCount = Math.floor((trainingTime - currentTime/10) % 3600 / 60);
+        let secondsCount = Math.floor((trainingTime - currentTime/10) % 60);
+        if (minutesCount < 10) {
+            minutesCount = '0' + minutesCount;
+        };
+        if (secondsCount < 10) {
+            secondsCount = '0' + secondsCount;
+        };
+        let formatedTimeLeft = hoursCount + ': ' + minutesCount + ': ' + secondsCount;
+        return formatedTimeLeft;
+    }
+
     //add new exercise from and push exercise object to the training array
     addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
@@ -156,6 +172,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         currentExerciseId++;             
     }
 
+    //add exercise form
     function addExerciseForm(currentExerciseId) {
         const form = document.createElement('form');
         form.classList.add('add-exercise');
@@ -451,7 +468,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         startTrainingBtn.innerText = 'Pause';
         startTrainingBtn.removeEventListener('click', startTraining);
         startTrainingBtn.addEventListener('click', pause);
-        setDisplayExercisesDetailsTimeouts();
+        displayExercisesDetails();
         intervalId = setInterval(trainingFunction, 100);
 
         //as intervals counted in seconds are multiplied by three when establishing representing them divs widths, we have to calculate timeline width // to place time pointer in right position
@@ -508,9 +525,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
         currentPosition = mulipliedCurrentPosition / (timelineWidth * 10) * 100;        
         currentPositionLine.style.left = currentPosition +'%';
         trainingTimeDisplay.innerText = 'Training time ' + getFormatedTrainingTimeFromMs();
+        timeLeftDisplay.innerText = 'Time left ' + getFormatedTimeLeft();
         if (currentTime === trainingTime * 10 ) { // when training is finished
             clearInterval(intervalId);
-            trainingTimeDisplay.innerText = 'Training time ' + currentTime + ' The End';
+            trainingTimeDisplay.innerText = 'Training time ' + getFormatedTrainingTime() + ' The End';
             currentTime = 0;
             showPlannerBtn.style.display = 'inline-block';
             startTrainingBtn.innerText = 'Start';
@@ -519,35 +537,45 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }
     }
 
-    //function set display exercises details timeouts
-    function setDisplayExercisesDetailsTimeouts () {
+    //function displays exercises names, durations etc
+    function displayExercisesDetails () {
         exercisesStartingTimes.forEach((element, index) =>  {
-            let exeTimeout = setTimeout(()=> {
-                secondRowH2.innerText = training[index].exerciseName;
-                timeUnit = training[index].durationUnit; //set timeUnit for time pointer
-                if (training[index].durationUnit === 'minutes') { //Count Down to next exercise
-                    let count = 5;
-                    let countDownInterval
+            setTimeout(()=> {
+                //show exercise name if exists
+                if (training[0].exerciseName === '') {
+                    secondRowH2.innerText = "Exercise #" + (index + 1);
+                } else {
+                    secondRowH2.innerText = training[index].exerciseName;
+                }
+                
+                timeUnit = training[index].durationUnit; //set timeUnit for time pointer to recognize difference between intervals units
+
+                if (training[index].durationUnit === 'minutes') { //count down to next exercise
+                    //count down
+
+                    //last 5 seconds
+                    let secondsLeft = 5;
+                    let countDown5sec;
                     let countDown = setTimeout(() => {
-                            countDownInterval = setInterval(()=> {
-                            commingNext.innerText = count;
-                            count--;
+                            countDown5sec = setInterval(()=> {
+                            commingNext.innerText = secondsLeft;
+                            secondsLeft--;
                         }, 1000)
                     }, training[index].duration * 60000 - 6000);
                     let countDown2 = setTimeout(()=> {
-                        clearInterval(countDownInterval);
+                        clearInterval(countDown5sec);
                     }, training[index].duration * 60000 + 1)
-                } else if (training[index].durationUnit === 'seconds') { //Count Down to next exercise
-                    let count = 5;
-                    let countDownInterval                    
+                } else if (training[index].durationUnit === 'seconds' && training[index].duration > 6) { //Count Down to next exercise
+                    let secondsLeft = 5;
+                    let countDown5sec                    
                     let countDown = setTimeout(() => {
-                            countDownInterval = setInterval(()=> {
-                            commingNext.innerText = count;
-                            count--;
+                            countDown5sec = setInterval(()=> {
+                            commingNext.innerText = secondsLeft;
+                            secondsLeft--;
                         }, 1000)
                     }, training[index].duration * 1000 - 6000);
                     let countDown2 = setTimeout(()=> {
-                        clearInterval(countDownInterval);
+                        clearInterval(countDown5sec);
                     }, training[index].duration * 1000 + 1)
                 }       
             }, element*1000)

@@ -182,5 +182,10 @@ input[name=notes] {
 
 
 .first-row {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.training-duration {
+    width: 30%;
 }
