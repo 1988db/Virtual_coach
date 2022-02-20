@@ -10,11 +10,15 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const ageInput = document.querySelector('.age-container');
     const exercisesContainer = document.querySelector('.exercises-container');
     const trainingTimeDisplay = document.querySelector('.training-duration');
+    const secondRowH2 = document.querySelector('.second-row .current-exe-time');
     const displayContainer = document.querySelector('.display-container');
     let currentExerciseId = 0;
     let trainingTime = 0;
+    let timelineWidth = [];
     let currentTime = 0;
-    let currentPosition = 0;    
+    let currentPosition = 0;
+    let mulipliedCurrentPosition = 0;
+    let timeUnit = '';    
     let clonedExerciesTimeline;
     let currentPositionLine;   
     const exercisesTimeline = document.querySelector('.timeline-container');
@@ -25,7 +29,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const primaryExeTimelineArr = [];
     const secondaryExeTimelineArr = [];
     const primaryCurrentTimeLine = [];
-    const secondaryCurrentPositinLine = [];    
+    const secondaryCurrentPositinLine = [];
+    const exercisesStartingTimes = [];
+    const exeTimeouts = [];    
     let intervalId;    
     let ftp = 0;
     let hrMax = 185;
@@ -390,6 +396,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 secondaryCurrentPositinLine.pop();
             }
         }
+        if (exercisesStartingTimes.length > 0) {
+            for (let i = 0; i < training.length; i++) {                
+                exercisesStartingTimes.pop();                
+            }
+        }
     }
 
     //train function
@@ -417,6 +428,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 secondaryExeTimelineArr.push(clonedExerciesTimeline);               
                 trainingTimeDisplay.innerText = "Training duration " + getFormatedTrainingTime();                         
             }
+            let startingTime = 0;
+            for (let i = 1; i <= training.length; i++) {                
+                exercisesStartingTimes.push(startingTime);
+                startingTime += training[i-1].duration;
+            }
+            console.log(exercisesStartingTimes)
         } else {
             alert('At least one exercise must be chosen and exercise duration, lower limit and upper limit must be higher than 0')
         }    
@@ -429,7 +446,23 @@ document.addEventListener('DOMContentLoaded', ()=> {
         startTrainingBtn.innerText = 'Pause';
         startTrainingBtn.removeEventListener('click', startTraining);
         startTrainingBtn.addEventListener('click', pause);
+        setDisplayExercisesDetailsTimeouts();
         intervalId = setInterval(trainingFunction, 100);
+
+        //as intervals counted in seconds are multiplied by three when establishing representing them divs widths, we have to calculate timeline width // to place time pointer in right position
+        let exeDurationTimes = [];
+        training.forEach(element => {
+            if (element.durationUnit === 'seconds') {
+                exeDurationTimes.push(element.duration * 3);
+            } else if (element.durationUnit === 'minutes') {
+                exeDurationTimes.push(element.duration * 60)
+            }
+        });
+        timelineWidth = exeDurationTimes.reduce((prev, current) => {
+            return prev + current;
+        })
+        console.log(timelineWidth)
+        //time pointer
         if (secondaryExeTimelineArr.length > 0) {
             clonedExerciesTimeline.style.position = 'relative';
             currentPositionLine = document.createElement('div');            
@@ -443,7 +476,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
             currentPositionLine.style.height = '100%';
             currentPositionLine.style.width = '2px';
             currentPositionLine.style.backgroundColor = 'orangered';
-            secondaryExeTimelineArr[0].appendChild(currentPositionLine);                      
+            secondaryExeTimelineArr[0].appendChild(currentPositionLine);                                  
         }
         
     }
@@ -460,7 +493,14 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //training function
     function trainingFunction () {
         currentTime++;
-        currentPosition = currentTime / (trainingTime * 10) * 100;        
+        if (timeUnit === 'seconds') {
+            mulipliedCurrentPosition++;
+            mulipliedCurrentPosition++;
+            mulipliedCurrentPosition++;
+        } else if (timeUnit === 'minutes') {
+            mulipliedCurrentPosition++;
+        }
+        currentPosition = mulipliedCurrentPosition / (timelineWidth * 10) * 100;        
         currentPositionLine.style.left = currentPosition +'%';
         trainingTimeDisplay.innerText = 'Training time ' + getFormatedTrainingTimeFromMs();
         if (currentTime === trainingTime * 10 ) { // when training is finished
@@ -472,6 +512,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
             startTrainingBtn.removeEventListener('click', pause);
             startTrainingBtn.addEventListener('click', startTraining);
         }
+    }
+
+    //function set display exercises details timeouts
+    function setDisplayExercisesDetailsTimeouts () {
+        exercisesStartingTimes.forEach((element, index) =>  {
+            let exeTimeout = setTimeout(()=> {
+                secondRowH2.innerText = training[index].exerciseName;
+                timeUnit = training[index].durationUnit; //set timeUnit for time pointer                
+            }, element*1000)
+        })
     }
 
     //remove exercise
