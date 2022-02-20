@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const trainingTimeDisplay = document.querySelector('.training-duration');
     const secondRowH2 = document.querySelector('.second-row .current-exe-time');
     const displayContainer = document.querySelector('.display-container');
+    const commingNext = document.querySelector('.comming-next');
     let currentExerciseId = 0;
     let trainingTime = 0;
     let timelineWidth = [];
@@ -524,7 +525,31 @@ document.addEventListener('DOMContentLoaded', ()=> {
             let exeTimeout = setTimeout(()=> {
                 secondRowH2.innerText = training[index].exerciseName;
                 timeUnit = training[index].durationUnit; //set timeUnit for time pointer
-                console.log(timeUnit)                
+                if (training[index].durationUnit === 'minutes') { //Count Down to next exercise
+                    let count = 5;
+                    let countDownInterval;
+                    let countDown = setTimeout(() => {
+                            countDownInterval = setInterval(()=> {
+                            commingNext.innerText = count;
+                            count--;
+                        }, 1000)
+                    }, training[index].duration * 60000 - 5000);
+                    let countDown2 = setTimeout(()=> {
+                        clearInterval(countDownInterval);
+                    }, training[index].duration * 60000)
+                } else if (training[index].durationUnit === 'seconds') { //Count Down to next exercise
+                    let count = 5;
+                    let countDownInterval;
+                    let countDown = setTimeout(() => {
+                            countDownInterval = setInterval(()=> {
+                            commingNext.innerText = count;
+                            count--;
+                        }, 1000)
+                    }, training[index].duration * 1000 - 5000);
+                    let countDown2 = setTimeout(()=> {
+                        clearInterval(countDownInterval);
+                    }, training[index].duration * 1000)
+                }       
             }, element*1000)
         })
     }
