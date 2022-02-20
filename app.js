@@ -431,7 +431,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
             let startingTime = 0;
             for (let i = 1; i <= training.length; i++) {                
                 exercisesStartingTimes.push(startingTime);
-                startingTime += training[i-1].duration;
+                if (training[i-1].durationUnit === 'minutes') {
+                    startingTime += training[i-1].duration*60;
+                } else if (training[i-1].durationUnit === 'seconds') {
+                    startingTime += training[i-1].duration;
+                }
             }
             console.log(exercisesStartingTimes)
         } else {
@@ -519,7 +523,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         exercisesStartingTimes.forEach((element, index) =>  {
             let exeTimeout = setTimeout(()=> {
                 secondRowH2.innerText = training[index].exerciseName;
-                timeUnit = training[index].durationUnit; //set timeUnit for time pointer                
+                timeUnit = training[index].durationUnit; //set timeUnit for time pointer
+                console.log(timeUnit)                
             }, element*1000)
         })
     }
