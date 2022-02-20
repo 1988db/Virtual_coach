@@ -527,28 +527,28 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 timeUnit = training[index].durationUnit; //set timeUnit for time pointer
                 if (training[index].durationUnit === 'minutes') { //Count Down to next exercise
                     let count = 5;
-                    let countDownInterval;
+                    let countDownInterval
                     let countDown = setTimeout(() => {
                             countDownInterval = setInterval(()=> {
                             commingNext.innerText = count;
                             count--;
                         }, 1000)
-                    }, training[index].duration * 60000 - 5000);
+                    }, training[index].duration * 60000 - 6000);
                     let countDown2 = setTimeout(()=> {
                         clearInterval(countDownInterval);
-                    }, training[index].duration * 60000)
+                    }, training[index].duration * 60000 + 1)
                 } else if (training[index].durationUnit === 'seconds') { //Count Down to next exercise
                     let count = 5;
-                    let countDownInterval;
+                    let countDownInterval                    
                     let countDown = setTimeout(() => {
                             countDownInterval = setInterval(()=> {
                             commingNext.innerText = count;
                             count--;
                         }, 1000)
-                    }, training[index].duration * 1000 - 5000);
+                    }, training[index].duration * 1000 - 6000);
                     let countDown2 = setTimeout(()=> {
                         clearInterval(countDownInterval);
-                    }, training[index].duration * 1000)
+                    }, training[index].duration * 1000 + 1)
                 }       
             }, element*1000)
         })
