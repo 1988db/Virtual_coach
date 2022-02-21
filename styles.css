@@ -49,7 +49,7 @@ body {
     margin-bottom: 15px;
 }
 
-.add-exercise-btn, .train-btn {
+.add-exercise-btn, .hide-planner-btn {
     width: 200px;
     height: 40px;
 }

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', ()=> {
     const showPlannerBtn = document.querySelector('.show-planner');
     const startTrainingBtn = document.querySelector('.start-training');
-    const trainBtn = document.querySelector('.train-btn');    
+    const hidePlannerBtn = document.querySelector('.hide-planner-btn');    
     const plannerContainer = document.querySelector('.planner-container');
     const addExerciseBtn = document.querySelector('.add-exercise-btn');
     const limitForm = document.getElementById('limits');    
@@ -11,18 +11,21 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesContainer = document.querySelector('.exercises-container');
     const trainingTimeDisplay = document.querySelector('.training-duration');
     const timeLeftDisplay = document.getElementById('main-countdown')
-    const secondRowH2 = document.querySelector('.second-row .current-exe-time');
+    const exerciseName = document.querySelector('.exe-name');
+    const currentExerciseTime = document.querySelector('.current-exe-time');
     const displayContainer = document.querySelector('.display-container');
     const commingNext = document.querySelector('.comming-next');
     let currentExerciseId = 0;
     let trainingTime = 0;
     let timelineWidth = [];
-    let currentTime = 0;
+    let currentTime = 1;
     let currentPosition = 0;
     let mulipliedCurrentPosition = 0;
     let timeUnit = '';    
     let clonedExerciesTimeline;
-    let currentPositionLine;   
+    let currentPositionLine;
+    let mainClock;
+    let mainClockTime = 1;   
     const exercisesTimeline = document.querySelector('.timeline-container');
     const exercisesTimelineContainer = displayContainer.querySelector('.sixth-row');
     const training = [];
@@ -46,7 +49,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     showPlannerBtn.addEventListener('click', showPlanner);
 
     //hide exercises planner and start training
-    trainBtn.addEventListener('click', train);
+    hidePlannerBtn.addEventListener('click', hidePlanner);
 
     //start training
     startTrainingBtn.addEventListener('click', startTraining);
@@ -117,10 +120,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
 
     //formatting seconds to H:MM:SS
-    function getFormatedTrainingTime () {
-        let hoursCount = Math.floor(trainingTime/3600);
-        let minutesCount = Math.floor(trainingTime % 3600 / 60);
-        let secondsCount = trainingTime % 60;
+    function getFormattedTime (time) {
+        let hoursCount = Math.floor(time/3600);
+        let minutesCount = Math.floor(time % 3600 / 60);
+        let secondsCount = time % 60;
         if (minutesCount < 10) {
             minutesCount = '0' + minutesCount;
         };
@@ -132,7 +135,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
     
     //formatting hundreds of miliseconds to H:MM:SS:0,1MS
-    function getFormatedTrainingTimeFromMs () {
+    function getFormatedTrainingTimeFromMs (currentTime) {
         let hoursCount = Math.floor(currentTime/6000);
         let minutesCount = Math.floor(currentTime % 6000 / 600);
         let secondsCount = Math.floor(currentTime % 600 / 10);
@@ -148,10 +151,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
 
     //show formatted time left
-    function getFormatedTimeLeft () {
-        let hoursCount = Math.floor((trainingTime - currentTime/10)/3600);
-        let minutesCount = Math.floor((trainingTime - currentTime/10) % 3600 / 60);
-        let secondsCount = Math.floor((trainingTime - currentTime/10) % 60);
+    function getFormatedTimeLeft (currentTime, totalTime) {
+        let hoursCount = Math.floor((totalTime - currentTime/10)/3600);
+        let minutesCount = Math.floor((totalTime - currentTime/10) % 3600 / 60);
+        let secondsCount = Math.ceil((totalTime - currentTime/10) % 60);
         if (minutesCount < 10) {
             minutesCount = '0' + minutesCount;
         };
@@ -421,8 +424,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }
     }
 
-    //train function
-    function train() {        
+    //hidePlanner function
+    function hidePlanner() {        
         //check if every exercise has neccessary data
         if (
             training.every(element => {
@@ -444,7 +447,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 clonedExerciesTimeline = exercisesTimeline.cloneNode(true);            
                 exercisesTimelineContainer.appendChild(clonedExerciesTimeline);
                 secondaryExeTimelineArr.push(clonedExerciesTimeline);               
-                trainingTimeDisplay.innerText = "Training duration " + getFormatedTrainingTime();                         
+                trainingTimeDisplay.innerText = "Training duration " + getFormattedTime(trainingTime);                         
             }
             let startingTime = 0;
             for (let i = 1; i <= training.length; i++) {                
@@ -470,6 +473,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         startTrainingBtn.addEventListener('click', pause);
         displayExercisesDetails();
         intervalId = setInterval(trainingFunction, 100);
+        mainClockStart();
 
         //as intervals counted in seconds are multiplied by three when establishing representing them divs widths, we have to calculate timeline width // to place time pointer in right position
         let exeDurationTimes = [];
@@ -510,9 +514,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
         startTrainingBtn.removeEventListener('click', pause);
         startTrainingBtn.addEventListener('click', startTraining);
         clearInterval(intervalId);
+        clearInterval(mainClock);
     }
 
-    //training function
+    //training function (runs each 100ms) counts training time, moves time pointer
     function trainingFunction () {
         currentTime++;
         if (timeUnit === 'seconds') {
@@ -523,12 +528,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
             mulipliedCurrentPosition++;
         }
         currentPosition = mulipliedCurrentPosition / (timelineWidth * 10) * 100;        
-        currentPositionLine.style.left = currentPosition +'%';
-        trainingTimeDisplay.innerText = 'Training time ' + getFormatedTrainingTimeFromMs();
-        timeLeftDisplay.innerText = 'Time left ' + getFormatedTimeLeft();
+        currentPositionLine.style.left = currentPosition +'%';        
+        timeLeftDisplay.innerText = 'Time left ' + getFormatedTimeLeft(currentTime, trainingTime);
         if (currentTime === trainingTime * 10 ) { // when training is finished
             clearInterval(intervalId);
-            trainingTimeDisplay.innerText = 'Training time ' + getFormatedTrainingTime() + ' The End';
+            trainingTimeDisplay.innerText = 'Training time ' + getFormattedTime(trainingTime) + ' The End';
             currentTime = 0;
             showPlannerBtn.style.display = 'inline-block';
             startTrainingBtn.innerText = 'Start';
@@ -537,32 +541,55 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }
     }
 
-    //function displays exercises names, durations etc
+    //main clock
+    function mainClockStart() {
+        mainClock = setInterval(()=> {
+            trainingTimeDisplay.innerText = 'Training time ' + getFormattedTime(mainClockTime);
+            mainClockTime++;
+            if(mainClockTime === trainingTime + 1) {
+                clearInterval(mainClock)
+            }            
+        }, 1000)
+    }
+    
+
+    //function displays exercises names, durations, exercises time etc
     function displayExercisesDetails () {
         exercisesStartingTimes.forEach((element, index) =>  {
             setTimeout(()=> {
                 //show exercise name if exists
                 if (training[0].exerciseName === '') {
-                    secondRowH2.innerText = "Exercise #" + (index + 1);
+                    exerciseName.innerText = "Exercise #" + (index + 1);
                 } else {
-                    secondRowH2.innerText = training[index].exerciseName;
+                    exerciseName.innerText = training[index].exerciseName;
                 }
+                //show exercise limits
                 
                 timeUnit = training[index].durationUnit; //set timeUnit for time pointer to recognize difference between intervals units
 
                 if (training[index].durationUnit === 'minutes') { //count down to next exercise
+                    //actual exercise time
+                    let currentExeTime = 0;
+                    let exeDuration = training[index].duration;
+                    let exerciseTimer = setInterval(()=> {
+                        currentExeTime++;                        
+                        currentExerciseTime.innerText = getFormatedTrainingTimeFromMs(currentExeTime);
+                        setTimeout(()=> {
+                            clearInterval(exerciseTimer);
+                        }, exeDuration*60000 + 1)                        
+                    }, 100);                    
                     //count down
 
                     //last 5 seconds
                     let secondsLeft = 5;
                     let countDown5sec;
-                    let countDown = setTimeout(() => {
+                    setTimeout(() => {
                             countDown5sec = setInterval(()=> {
                             commingNext.innerText = secondsLeft;
                             secondsLeft--;
                         }, 1000)
                     }, training[index].duration * 60000 - 6000);
-                    let countDown2 = setTimeout(()=> {
+                    setTimeout(()=> {
                         clearInterval(countDown5sec);
                     }, training[index].duration * 60000 + 1)
                 } else if (training[index].durationUnit === 'seconds' && training[index].duration > 6) { //Count Down to next exercise
