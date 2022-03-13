@@ -20,7 +20,7 @@ body {
     padding-left: 10px;
 }
 
-.show-planner, .start-training {
+.show-planner-btn, .start-workout-btn {
     display: none;
     width: 200px;
     height: 40px;
@@ -54,7 +54,7 @@ body {
     height: 40px;
 }
 
-.limits-container {
+.zones-form-container {
     width: 270px;
     padding: 5px;
     display: flex;
@@ -62,7 +62,7 @@ body {
     border: 1px solid black;
 }
 
-.doNotKnowMyHrMax-container, .ftp-radio-input-container, .hrMax-radio-input-container, .ftp-limit-container, .hrMax-limit-container, .age-container {
+.doNotKnowMyHrMax-container, .choose-ftp-input-container, .choose-hrMax-input-container, .ftp-container, .hrMax-container, .age-container {
     display: flex;
     justify-content: space-between;
     margin: 5px 0;
@@ -72,11 +72,11 @@ body {
     display: none;
 }
 
-.ftp, .hrMax {
+.zones-type-form-input {
     width: 50px;    
 }
 
-.exercises-container {
+.exercises-generator-container {
     margin: 15px 0;
     display: flex;
     flex-wrap: wrap;
@@ -95,7 +95,7 @@ body {
     margin: 0 5px 5px 0;
 }
 
-.limit-type-inputs, .duration-unit-inputs {
+.zones-type-inputs, .duration-unit-inputs {
     display: flex;
     justify-content: space-evenly;
 }
@@ -126,12 +126,12 @@ input[name=notes] {
     width: 135px;
 }
 
-.training-preview {
+.workout-details {
     display: flex;
     flex-direction: column;    
 }
 
-.training-preview-top-container, .training-preview-bottom-container {
+.workout-details-top-container, .workout-details-bottom-container {
     display: flex;
 }
 
@@ -169,7 +169,7 @@ input[name=notes] {
     display: flex;
     align-items: flex-end;
     width: 100%;    
-    height: 122px;    
+    height: 80px;    
     background-color: rgb(112, 161, 200);
     background-color: transparent;
 }
@@ -180,12 +180,21 @@ input[name=notes] {
     flex-direction: column;
 }
 
+.workout-in-progress-container {
+    display: flex;
+    flex-direction: column;
+}
 
 .first-row {
     display: flex;
     justify-content: space-between;
 }
 
-.training-duration {
+.seventh-row {
+    display: flex;
+    width: 100%;
+}
+
+.workout-duration {
     width: 30%;
 }
