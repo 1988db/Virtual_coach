@@ -1,178 +1,110 @@
 document.addEventListener('DOMContentLoaded', ()=> {
-    const showPlannerBtn = document.querySelector('.show-planner');
-    const startTrainingBtn = document.querySelector('.start-training');
-    const hidePlannerBtn = document.querySelector('.hide-planner-btn');    
-    const plannerContainer = document.querySelector('.planner-container');
-    const addExerciseBtn = document.querySelector('.add-exercise-btn');
-    const limitForm = document.getElementById('limits');    
-    const ftpInput = document.getElementById('ftp');
-    const hrMaxInput = document.getElementById('hrMax');
-    const ageInput = document.querySelector('.age-container');
-    const exercisesContainer = document.querySelector('.exercises-container');
-    const trainingTimeDisplay = document.querySelector('.training-duration');
+    const showPlannerBtn = document.getElementById('show-planner-btn');
+    const startWorkoutBtn = document.getElementById('start-workout-btn');
+    const hidePlannerBtn = document.getElementById('hide-planner-btn');    
+    const plannerContainer = document.getElementById('planner-container');
+    const addExerciseBtn = document.getElementById('add-exercise-btn');
+    const zonesTypeForm = document.getElementById('zones-type-form');    
+    const ageInput = document.getElementById('age-container');
+    const exercisesGeneratorContainer = document.getElementById('exercises-generator-container');
+    const exercisesTimelineContainer = document.getElementById('timeline-container');
+    const workoutInProgressContainer = document.getElementById('workout-in-progress-container');
+    const workoutTimeDisplay = document.getElementById('main-timer');
     const timeLeftDisplay = document.getElementById('main-countdown')
-    const exerciseName = document.querySelector('.exe-name');
-    const currentExerciseTime = document.querySelector('.current-exe-time');
-    const displayContainer = document.querySelector('.display-container');
-    const commingNext = document.querySelector('.comming-next');
+    const exerciseName = document.getElementById('exe-name');
+    const currentExerciseTimeDisplay = document.getElementById('current-exe-time');    
+    const commingNext = document.getElementById('comming-next');
+    const clonedExercisesTimelineContainer = document.getElementById('seventh-row');
     let currentExerciseId = 0;
-    let trainingTime = 0;
-    let timelineWidth = [];
-    let currentTime = 1;
-    let currentPosition = 0;
-    let mulipliedCurrentPosition = 0;
-    let timeUnit = '';    
-    let clonedExerciesTimeline;
-    let currentPositionLine;
-    let mainClock;
-    let mainClockTime = 1;   
-    const exercisesTimeline = document.querySelector('.timeline-container');
-    const exercisesTimelineContainer = displayContainer.querySelector('.sixth-row');
-    const training = [];
-    const exercisesForms = [];
-    const exercisesTimelines = [];
-    const primaryExeTimelineArr = [];
-    const secondaryExeTimelineArr = [];
-    const primaryCurrentTimeLine = [];
-    const secondaryCurrentPositinLine = [];
-    const exercisesStartingTimes = [];
-    const exeTimeouts = [];    
-    let intervalId;    
     let ftp = 0;
     let hrMax = 185;
     let limitType = 'ftp';
-    const exercisesBgColors = [
-        'lightblue', 'lightgreen', 'green', 'yellow', 'orange', 'red', 'purple'
-    ];
+    let workoutDuration = 0;
+    let workoutCurrentTime = 0;
+    let exerciseCurrentTime = 0;       
+    let clonedExerciesTimeline;      
+    const workout = [];
+    const exercisesForms = [];
+    const exercisesTimelinesArr = [];    
+    const clonedExercisesTimelineArr = [];   
+    const exercisesStartingTimes = [];       
+    let intervalId;
+    let exerciseInProgressIndex = 0;    
+     
+    
+    //check what kind of zones do user want to use - Power or Heart Rate
+    zonesTypeForm.addEventListener('change', checkZones);
 
-    //show exercises planner
-    showPlannerBtn.addEventListener('click', showPlanner);
+    //add new exercise from and push exercise object to the workout array
+    addExerciseBtn.addEventListener('click', addExercise);
 
-    //hide exercises planner and start training
+    //hide exercises planner and start workout
     hidePlannerBtn.addEventListener('click', hidePlanner);
 
-    //start training
-    startTrainingBtn.addEventListener('click', startTraining);
+    //start workout
+    startWorkoutBtn.addEventListener('click', startWorkout);
 
-    //take data from limits form
-    limitForm.addEventListener('change', setLimits);
+    //show exercises planner when training is paused
+    showPlannerBtn.addEventListener('click', showPlanner);    
 
-    //set Limits function
-    function setLimits (e) {
+    //function checks what kind of zones do user want to use - Power or Heart Rate
+    function checkZones (e) {
         if (e.target.name === "ftp") {
             ftp = e.target.value;
         }
         if (e.target.name === 'hrMax') {
             hrMax = e.target.value;
         }        
-        limitType = limitForm.chosenLimitType.value;
-        if (limitForm.doNotKnowMyHrMax.checked) {
+        limitType = zonesTypeForm.chosenZonesType.value;
+        if (zonesTypeForm.doNotKnowMyHrMax.checked) {
             ageInput.style.display = 'flex';
         } else {
             ageInput.style.display = 'none';
         }
-        if (limitForm.age.value < 0) {
+        if (zonesTypeForm.age.value < 0) {
             alert('Age value must be bigger than 0');
-            limitForm.age.value = 1;
+            zonesTypeForm.age.value = 1;
         }
-        if (limitForm.age.value > 220) {
+        if (zonesTypeForm.age.value > 219) {
             alert('Are you serious???');
-            limitForm.age.value = 1;
+            zonesTypeForm.age.value = 1;
         }
-        if (limitForm.doNotKnowMyHrMax.checked) {
-            hrMax = 220 - limitForm.age.value;
-            limitForm.hrMax.value = hrMax;
+        if (zonesTypeForm.doNotKnowMyHrMax.checked) {
+            hrMax = 220 - zonesTypeForm.age.value;
+            zonesTypeForm.hrMax.value = hrMax;
         }
-        if (training.length > 0) {
+        if (workout.length > 0) {
             renderExercisesTimelines(); //update exercises
         }
-        if (exercisesForms.length > 0) { //if limits based od hrMax exercises limits cant go above hrMax
-            exercisesForms.forEach(element => {
+        if (exercisesForms.length > 0) { //if zones are based on hrMax, exercises zones can't go above hrMax            
+            exercisesForms.forEach((element, index) => {
                 if (element.upperLimit.value > hrMax && limitType === 'hrMax') {
-                    element.upperLimit.value = hrMax;
+                    element.upperLimit.value = hrMax;                    
+                    workout[index].upperLimit = hrMax;
                 }
                 if (element.lowerLimit.value > hrMax && limitType === 'hrMax') {
-                    element.lowerLimit.value = hrMax;
-                }
-                if (limitForm.doNotKnowMyHrMax.checked && limitType === 'hrMax' && (220 - limitForm.age.value) < element.upperLimit.value) {
-                    element.upperLimit.value = hrMax;
-                }
-                if (limitForm.doNotKnowMyHrMax.checked && limitType === 'hrMax' && (220 - limitForm.age.value) < element.lowerLimit.value) {
-                    element.lowerLimit.value = hrMax;
-                }
-            })
-            training.forEach(element => {
-                if (element.upperLimit && limitType === 'hrMax' > hrMax) {
-                    element.upperLimit = hrMax;
-                }
-                if (element.lowerLimit && limitType === 'hrMax' > hrMax) {
-                    element.lowerLimit = hrMax;
-                }
-                if (limitForm.doNotKnowMyHrMax.checked && limitType === 'hrMax' && (220 - limitForm.age) < element.upperLimit) {
-                    element.upperLimit = hrMax;
-                }
-                if (limitForm.doNotKnowMyHrMax.checked && limitType === 'hrMax' && (220 - limitForm.age) < element.lowerLimit) {
-                    element.lowerLimit = hrMax;
-                } 
-            })
+                    element.lowerLimit.value = hrMax - 10;
+                    workout[index].lowerLimit = hrMax - 10;
+                }                
+            })           
         }
                                         
     }
 
-    //formatting seconds to H:MM:SS
-    function getFormattedTime (time) {
-        let hoursCount = Math.floor(time/3600);
-        let minutesCount = Math.floor(time % 3600 / 60);
-        let secondsCount = time % 60;
-        if (minutesCount < 10) {
-            minutesCount = '0' + minutesCount;
-        };
-        if (secondsCount < 10) {
-            secondsCount = '0' + secondsCount;
-        };
-        let formatedTrainingTime = hoursCount + ': ' + minutesCount + ': ' + secondsCount;
-        return formatedTrainingTime;
-    }
-    
-    //formatting hundreds of miliseconds to H:MM:SS:0,1MS
-    function getFormatedTrainingTimeFromMs (currentTime) {
-        let hoursCount = Math.floor(currentTime/6000);
-        let minutesCount = Math.floor(currentTime % 6000 / 600);
-        let secondsCount = Math.floor(currentTime % 600 / 10);
-        let hundredMilisecondsCount = currentTime % 10;
-        if (minutesCount < 10) {
-            minutesCount = '0' + minutesCount;
-        };
-        if (secondsCount < 10) {
-            secondsCount = '0' + secondsCount;
-        };
-        let formatedTrainingTime = hoursCount + ': ' + minutesCount + ': ' + secondsCount + ': ' + hundredMilisecondsCount;
-        return formatedTrainingTime;
-    }
-
-    //show formatted time left
-    function getFormatedTimeLeft (currentTime, totalTime) {
-        let hoursCount = Math.floor((totalTime - currentTime/10)/3600);
-        let minutesCount = Math.floor((totalTime - currentTime/10) % 3600 / 60);
-        let secondsCount = Math.ceil((totalTime - currentTime/10) % 60);
-        if (minutesCount < 10) {
-            minutesCount = '0' + minutesCount;
-        };
-        if (secondsCount < 10) {
-            secondsCount = '0' + secondsCount;
-        };
-        let formatedTimeLeft = hoursCount + ': ' + minutesCount + ': ' + secondsCount;
-        return formatedTimeLeft;
-    }
-
-    //add new exercise from and push exercise object to the training array
-    addExerciseBtn.addEventListener('click', addExercise);
     function addExercise() {
         let exercise = new Exercise(currentExerciseId, '', 0, 'minutes', 0, 0, 0, 0, '');
-        training.push(exercise);        
-        addExerciseForm(currentExerciseId); //adds exercise from
-        addExerciseTimeline(currentExerciseId); //add exercise Timeline
+        workout.push(exercise);
+        addExerciseTimeline(currentExerciseId); //add exercise Timeline        
+        addExerciseForm(currentExerciseId); //adds exercise from        
         currentExerciseId++;             
+    }
+
+    //add exercise timeline
+    function addExerciseTimeline(currentExerciseId) {
+        const exerciseTimeline = document.createElement('div');
+        exerciseTimeline.setAttribute('id', 'exeTimeline' + currentExerciseId);
+        exercisesTimelineContainer.appendChild(exerciseTimeline);
+        exercisesTimelinesArr.push(exerciseTimeline);        
     }
 
     //add exercise form
@@ -182,7 +114,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         form.dataset.id = currentExerciseId;
         form.setAttribute('name', 'exe' + currentExerciseId);
         form.setAttribute('id', 'exe' + currentExerciseId);
-        exercisesContainer.appendChild(form);
+        exercisesGeneratorContainer.appendChild(form);
         const button = document.createElement('button');
         //close button
         button.innerText = 'X';
@@ -259,24 +191,23 @@ document.addEventListener('DOMContentLoaded', ()=> {
         minutesInput.setAttribute('type', 'radio');
         minutesInput.setAttribute('checked', true);        
         minutesInput.classList.add('number-input');
-        durationMinutesUnitContainer.appendChild(minutesInput);
-        
-        //power/hr limits
-        const limitsFieldset = document.createElement('fieldset');
-        form.appendChild(limitsFieldset);
+        durationMinutesUnitContainer.appendChild(minutesInput);        
+        //power/hr zones
+        const zonesFieldset = document.createElement('fieldset');
+        form.appendChild(zonesFieldset);
         const legend = document.createElement('legend');
-        legend.innerText = 'Limits';
-        limitsFieldset.appendChild(legend);
-        //limits type
+        legend.innerText = 'zones';
+        zonesFieldset.appendChild(legend);
+        //zones type
         const limitTypeInputsContainer = document.createElement('div');
         limitTypeInputsContainer.classList.add('limit-type-inputs');
-        limitsFieldset.appendChild(limitTypeInputsContainer);
+        zonesFieldset.appendChild(limitTypeInputsContainer);
         //power
         //inputs        
         //upper limit
         const upperLimitInputContainer = document.createElement('div');
         upperLimitInputContainer.classList.add('upper-limit-input-container');
-        limitsFieldset.appendChild(upperLimitInputContainer);
+        zonesFieldset.appendChild(upperLimitInputContainer);
         const upperLimitLabel = document.createElement('label');
         upperLimitLabel.setAttribute('for', 'upperLimit');
         upperLimitLabel.innerText = 'Upper limit';
@@ -291,7 +222,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         //lower limit
         const lowerLimitInputContainer = document.createElement('div');
         lowerLimitInputContainer.classList.add('lower-limit-input-container');
-        limitsFieldset.appendChild(lowerLimitInputContainer);
+        zonesFieldset.appendChild(lowerLimitInputContainer);
         const lowerLimitLabel = document.createElement('label');
         lowerLimitLabel.setAttribute('for', 'lowerLimit');
         lowerLimitLabel.innerText = 'Lower limit';
@@ -303,12 +234,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
         lowerLimitInput.setAttribute('min', '0');        
         lowerLimitInput.classList.add('number-input');
         lowerLimitInputContainer.appendChild(lowerLimitInput);
-
         //cadence
         const cadenceFieldset = document.createElement('fieldset');
         form.appendChild(cadenceFieldset);
         const cadenceLegend = document.createElement('legend');
-        cadenceLegend.innerText = 'Cadence limits';
+        cadenceLegend.innerText = 'Cadence zones';
         cadenceFieldset.appendChild(cadenceLegend);        
         //cadence upper limit
         const upperCadenceLimitInputContainer = document.createElement('div');
@@ -341,8 +271,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         cadenceLowerLimitInput.setAttribute('min', '0');  
         cadenceLowerLimitInput.setAttribute('max', '300');     
         cadenceLowerLimitInput.classList.add('number-input');
-        lowerCadenceLimitInputContainer.appendChild(cadenceLowerLimitInput);
-        
+        lowerCadenceLimitInputContainer.appendChild(cadenceLowerLimitInput);        
         //notes
         const notesInputContainer = document.createElement('div');
         notesInputContainer.classList.add('notes-input-container');
@@ -360,22 +289,209 @@ document.addEventListener('DOMContentLoaded', ()=> {
         //add readForm function
         form.addEventListener('change', readForm)
         //push form to exercisesForms array
-        exercisesForms.push(form);             
+        exercisesForms.push(form);                     
     }
 
-    //limit zones template
-    class PowerZones {
-        constructor(ftp) {
-            this.first = [0, Math.floor(ftp * 0.55), 'Active recovery'];
-            this.second = [Math.floor(ftp * 0.55), Math.floor(ftp * 0.75), 'Aerobic treshold'];
-            this.third = [Math.floor(ftp * 0.75), Math.floor(ftp * 0.9), 'Tempo'];
-            this.fourth = [Math.floor(ftp * 0.9), Math.floor(ftp * 1.05), 'Lactate Treshold'];
-            this.fifth = [Math.floor(ftp * 1.05), Math.floor(ftp * 1.2), 'Aerobic capacity'];
-            this.sixth = [Math.floor(ftp * 1.2), Math.floor(ftp * 1.5), 'Anaerobic capatiy'];
-            this.sixth = [Math.floor(ftp * 1.5), Infinity, 'Neuromuscular'];
+    //readForm function
+    function readForm(e) {  
+        const exerciseIndex = exercisesForms.indexOf(this);      
+        if (e.target.name === 'duration' || e.target.name === 'id' ||
+        e.target.name === 'lowerLimit' || e.target.name === 'upperLimit' ||
+        e.target.name === 'lowerCadenceLimit' || e.target.name === 'upperCadenceLimit') {
+            workout[exerciseIndex][e.target.name] = parseInt(e.target.value);                        
+        } else {
+            workout[exerciseIndex][e.target.name] = e.target.value;
+        }
+        if (e.target.name === 'upperLimit' && e.target.value < workout[exerciseIndex]['lowerLimit']) {
+            alert('Upper limit cannot be lower than lower limit!');
+            this.lowerLimit.value = 0;
+            workout[exerciseIndex]['lowerLimit'] = 0;
+        }
+        if (e.target.name === 'upperCadenceLimit' && e.target.value < workout[exerciseIndex]['lowerCadenceLimit']) {
+            alert('Upper limit cannot be lower than lower limit!');
+            this.lowerCadenceLimit.value = 0;
+            workout[exerciseIndex]['lowerCadenceLimit'] = 0;
+        }
+        if (e.target.name === 'upperLimit' && limitType === 'hrMax' && e.target.value > hrMax) {
+            alert('You cannot go above your HrMax!');
+            e.target.value = hrMax;
+            workout[exerciseIndex]["upperLimit"] = hrMax;
+        }
+        if (e.target.name === 'lowerLimit' && e.target.value > workout[exerciseIndex]['upperLimit']) {
+            alert('Lower limit cannot be higher than upper limit!');
+            e.target.value = 0;
+            workout[exerciseIndex]['lowerLimit'] = 0;
+        }
+        if (e.target.name === 'lowerLimit' && limitType === 'hrMax' && e.target.value > hrMax) {
+            alert('You cannot go above your HrMax!');
+            e.target.value = hrMax;
+            workout[exerciseIndex]["lowerLimit"] = hrMax;
+        }
+        if (e.target.name === 'lowerCadenceLimit' && e.target.value > workout[exerciseIndex]['upperCadenceLimit']) {
+            alert('Lower limit cannot be higher than upper limit!');
+            e.target.value = 0;
+            workout[exerciseIndex]['lowerCadenceLimit'] = 0;
+        }               
+        renderExercisesTimelines();
+    }    
+
+    //render Exercises Timelines
+    function renderExercisesTimelines() {
+        //count workout time
+        workoutDuration = workout.reduce(function (total, current) {
+            if (current.durationUnit === 'minutes') {
+                return total + current.duration * 60;
+            } else {
+               return total + parseInt(current.duration);
+            }            
+        }, 0)        
+        //setting divs width
+        exercisesTimelinesArr.forEach((element, index) => {
+            let currentExerciseDuration = 0;
+            if (workout[index].durationUnit === 'minutes') {
+                currentExerciseDuration = workout[index].duration * 60;
+            } else {
+                currentExerciseDuration = workout[index].duration * 3; //multiply for better visibility 
+            }
+            element.style.width = Math.round(currentExerciseDuration / workoutDuration * 10000) / 100 + '%';    
+        })
+        //counting div height
+        if (limitType === 'hrMax') {   ///if zones based on hrMax
+            exercisesTimelinesArr.forEach((element, index) => {                
+            element.style.height = Math.round(workout[index].upperLimit / hrMax * 10000) / 100 + '%';
+            if (workout[index].upperLimit > hrMax) {
+                element.style.height = '100%';
+            }
+            //color divs
+            element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(hrMax / workout[index].upperLimit * 100 * 0.6) + '%, lightgreen ' + Math.floor(hrMax / workout[index].upperLimit * 100 * 0.6) + '%, lightgreen '  + Math.floor(hrMax / workout[index].upperLimit * 100 * 0.7) + '%, lightyellow ' + Math.floor(hrMax / workout[index].upperLimit * 100 * 0.7) + '%, lightyellow '  + Math.floor(hrMax / workout[index].upperLimit * 100 * 0.8) + '%, orange ' + Math.floor(hrMax / workout[index].upperLimit * 100 * 0.8) + '%, orange ' + Math.floor(hrMax / workout[index].upperLimit * 100 * 0.9) + '%, red ' + Math.floor(hrMax / workout[index].upperLimit * 100 * 0.9) + '%, red 100%)';
+            //when zones exist draw border                               
+            if (workout[index].lowerLimit >= 0 && workout[index].upperLimit > 0 && workout[index].duration > 0) {
+            element.style.border = '1px solid black';
+            }
+            })
+        } else if (limitType === 'ftp') {   //if zones based on power
+            let exercisesTimelineHeightReferenceValue = workout.reduce(function (prevValue, currentValue) {          
+            return Math.max(prevValue, currentValue.upperLimit);       //looking for biggest limit value      
+            }, -1)            
+                   
+            //setting divs height and bacground color
+            exercisesTimelinesArr.forEach((element, index) => {            
+                element.style.height = Math.round(workout[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
+                //pick bgcolor corresponding to workout zone            
+                if (ftp > 1) {   ///if user defined his ftp we color the divs
+                    element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(ftp / workout[index].upperLimit * 100 * 0.55) + '%, lightgreen ' + Math.floor(ftp / workout[index].upperLimit * 100 * 0.55) + '%, lightgreen '  + Math.floor(ftp / workout[index].upperLimit * 100 * 0.75) + '%, lightyellow ' + Math.floor(ftp / workout[index].upperLimit * 100 * 0.75) + '%, lightyellow '  + Math.floor(ftp / workout[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / workout[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / workout[index].upperLimit * 100 * 1.05 ) + '%, pink ' + Math.floor(ftp / workout[index].upperLimit * 100 * 1.05) + '%, pink ' + Math.floor(ftp / workout[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / workout[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / workout[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / workout[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / workout[index].upperLimit * 1000) + '%)';
+                } else {                
+                    element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(workout[index].lowerLimit / workout[index].upperLimit * 100) + '%, grey ' + Math.floor(workout[index].lowerLimit / workout[index].upperLimit * 100) + '%, grey 100%)';
+                }               
+            //when zones exist draw border
+            if (workout[index].lowerLimit >= 0 && workout[index].upperLimit > 0 && workout[index].duration) {
+                element.style.border = '1px solid black'; 
+            }                        
+            })
+        }    
+    }         
+
+    //hidePlanner function
+    function hidePlanner() {        
+        //check if every exercise has neccessary data
+        if ( workout.every(element => {
+                return element.duration > 0 && element.lowerLimit > 0 && element.upperLimit > 0
+            }) && workout.length > 0 ) {                
+                plannerContainer.style.opacity = '0';        
+                showPlannerBtn.style.display = 'inline-block';
+                startWorkoutBtn.style.display = 'inline-block';
+                setTimeout(()=> {
+                    showPlannerBtn.style.opacity = '1';
+                    startWorkoutBtn.style.opacity = '1';
+                }, 1);
+                setTimeout(()=>  plannerContainer.style.display = 'none', 999);
+                workoutInProgressContainer.style.display = 'flex';
+                workoutInProgressContainer.style.opacity = '0';
+                setTimeout(()=> workoutInProgressContainer.style.opacity = '1', 999);
+                //clone exercises timeline from planner
+                cloneWorkoutTimeline()                        
+                //exercises starting times
+                setExercisesStartingTimes()                
+        } else {
+            alert('At least one exercise must be chosen and exercise duration, lower limit and upper limit must be higher than 0');
         }
     }
-    
+
+    //clone workout timeline function
+    function cloneWorkoutTimeline() {
+        clonedExerciesTimeline = exercisesTimelineContainer.cloneNode(true);                         
+        clonedExercisesTimelineContainer.appendChild(clonedExerciesTimeline);
+        clonedExercisesTimelineArr.push(clonedExerciesTimeline);               
+        workoutTimeDisplay.innerText = "workout duration " + workoutDuration; 
+    }
+
+    //set exercises starting times function
+    function setExercisesStartingTimes() {
+        let startingTime = 0;
+        for (let i = 1; i <= workout.length; i++) {                
+            exercisesStartingTimes.push(startingTime);
+            if (workout[i-1].durationUnit === 'minutes') {
+                startingTime += workout[i-1].duration*60;
+            } else if (workout[i-1].durationUnit === 'seconds') {
+                startingTime += workout[i-1].duration;
+            }
+        }
+    }
+
+    //start workout
+    function startWorkout() {               
+        hidePlannerBtnFnc()
+        displayExercisesDetails();
+        intervalId = setInterval(runTimers, 1000);
+    }
+
+    //hide planner button function
+    function hidePlannerBtnFnc() {
+        showPlannerBtn.style.display = 'none';
+        startWorkoutBtn.innerText = 'Pause';
+        startWorkoutBtn.removeEventListener('click', startWorkout);
+        startWorkoutBtn.addEventListener('click', pause);
+    }
+
+    //function displays exercises names, durations, exercises time etc
+    function displayExercisesDetails() {
+        //display current exercise
+        exerciseName.innerText = workout[exerciseInProgressIndex].exerciseName;        
+        //display next exercise
+        if (workout[exerciseInProgressIndex + 1]) {
+            commingNext.innerText = workout[exerciseInProgressIndex + 1].exerciseName;
+        }                 
+    }
+
+    //functions responsible for updating and displaying workout time
+    function runTimers() {          
+        //check which exercise is currently in progress
+        console.log(exerciseInProgressIndex);
+        console.log(exercisesStartingTimes);
+        if (workout.length > 1) {
+            for (let i = 0; i < workout.length -1; i++) {                
+                if (workoutCurrentTime +1 >= exercisesStartingTimes[i] && workoutCurrentTime < exercisesStartingTimes[i +1]) {
+                    exerciseInProgressIndex = i;
+                }                
+            }
+        }
+        if (workoutCurrentTime +1 >= exercisesStartingTimes[workout.length -1]) {
+            exerciseInProgressIndex = workout.length - 1;
+        }
+        //when new exercise starts
+        if (workoutCurrentTime > 1 && exercisesStartingTimes.includes(workoutCurrentTime + 1)) {
+            exerciseCurrentTime = -1;
+            displayExercisesDetails();
+        }              
+        workoutCurrentTime++;
+        exerciseCurrentTime++;
+        workoutTimeDisplay.innerText = workoutCurrentTime + ' workout Time';
+        currentExerciseTimeDisplay.innerText = exerciseCurrentTime + ' current EXE';
+    }
+
+    function showPlanner () {
+
+    }
 
     //exercise template
     class Exercise {
@@ -392,345 +508,21 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }
     }
 
-    //show exercises planner
-    function showPlanner() {
-        showPlannerBtn.style.display = 'none';
-        startTrainingBtn.style.display = 'none';
-        displayContainer.style.display = 'none';        
-        if (plannerContainer.style.display === 'flex' || plannerContainer.style.display === '') { // if we press Open Planner button while planner is disappearing
-            setTimeout(()=> {
-                plannerContainer.style.display = 'flex';
-                plannerContainer.style.opacity = '0';
-                setTimeout(()=> plannerContainer.style.opacity = '1', 1000);
-            }, 1000)
-        } else {
-            plannerContainer.style.display = 'flex';
-            plannerContainer.style.opacity = '0';
-            setTimeout(()=> plannerContainer.style.opacity = '1', 1);
-        }
-        if (secondaryExeTimelineArr.length > 0) {            
-            exercisesTimelineContainer.removeChild(secondaryExeTimelineArr[0]);
-            secondaryExeTimelineArr.pop();
-        }
-        if (secondaryCurrentPositinLine.length > 0) { // remove currentPositionLines when going back to planner
-            for (let i = 0; i < secondaryCurrentPositinLine.length; i ++) {
-                secondaryCurrentPositinLine.pop();
-            }
-        }
-        if (exercisesStartingTimes.length > 0) {
-            for (let i = 0; i < training.length; i++) {                
-                exercisesStartingTimes.pop();                
-            }
-        }
+    function removeExercise() {
+
     }
 
-    //hidePlanner function
-    function hidePlanner() {        
-        //check if every exercise has neccessary data
-        if (
-            training.every(element => {
-            return element.duration > 0 && element.lowerLimit > 0 && element.upperLimit > 0
-        }) && training.length > 0
-        ) {
-            plannerContainer.style.opacity = '0';        
-            showPlannerBtn.style.display = 'inline-block';
-            startTrainingBtn.style.display = 'inline-block';
-            setTimeout(()=> {
-                showPlannerBtn.style.opacity = '1';
-                startTrainingBtn.style.opacity = '1';
-            }, 1);
-            setTimeout(()=>  plannerContainer.style.display = 'none', 999);
-            displayContainer.style.display = 'flex';
-            displayContainer.style.opacity = '0';
-            setTimeout(()=> displayContainer.style.opacity = '1', 999);
-            if (training.length > 0) {
-                clonedExerciesTimeline = exercisesTimeline.cloneNode(true);            
-                exercisesTimelineContainer.appendChild(clonedExerciesTimeline);
-                secondaryExeTimelineArr.push(clonedExerciesTimeline);               
-                trainingTimeDisplay.innerText = "Training duration " + getFormattedTime(trainingTime);                         
-            }
-            let startingTime = 0;
-            for (let i = 1; i <= training.length; i++) {                
-                exercisesStartingTimes.push(startingTime);
-                if (training[i-1].durationUnit === 'minutes') {
-                    startingTime += training[i-1].duration*60;
-                } else if (training[i-1].durationUnit === 'seconds') {
-                    startingTime += training[i-1].duration;
-                }
-            }
-            console.log(exercisesStartingTimes)
-        } else {
-            alert('At least one exercise must be chosen and exercise duration, lower limit and upper limit must be higher than 0')
-        }    
-        
+    //pause workout function
+    function pause() {
+        showPlannerBtnFnc();
+        clearInterval(intervalId);        
     }
 
-    //start training
-    function startTraining() {               
-        showPlannerBtn.style.display = 'none';
-        startTrainingBtn.innerText = 'Pause';
-        startTrainingBtn.removeEventListener('click', startTraining);
-        startTrainingBtn.addEventListener('click', pause);
-        displayExercisesDetails();
-        intervalId = setInterval(trainingFunction, 100);
-        mainClockStart();
-
-        //as intervals counted in seconds are multiplied by three when establishing representing them divs widths, we have to calculate timeline width // to place time pointer in right position
-        let exeDurationTimes = [];
-        training.forEach(element => {
-            if (element.durationUnit === 'seconds') {
-                exeDurationTimes.push(element.duration * 3);
-            } else if (element.durationUnit === 'minutes') {
-                exeDurationTimes.push(element.duration * 60)
-            }
-        });
-        timelineWidth = exeDurationTimes.reduce((prev, current) => {
-            return prev + current;
-        })
-        console.log(timelineWidth)
-        //time pointer
-        if (secondaryExeTimelineArr.length > 0) {
-            clonedExerciesTimeline.style.position = 'relative';
-            currentPositionLine = document.createElement('div');            
-            secondaryCurrentPositinLine.unshift(currentPositionLine);            
-            if(secondaryCurrentPositinLine.length > 1) {
-                secondaryExeTimelineArr[0].removeChild(secondaryCurrentPositinLine[1]);
-                secondaryCurrentPositinLine.pop();
-            }
-            currentPositionLine.style.position = 'absolute';
-            currentPositionLine.style.left = currentPosition + '%';
-            currentPositionLine.style.height = '100%';
-            currentPositionLine.style.width = '2px';
-            currentPositionLine.style.backgroundColor = 'orangered';
-            secondaryExeTimelineArr[0].appendChild(currentPositionLine);                                  
-        }
-        
-    }
-
-    //pause function
-    function pause () {
+    //show planner button function
+    function showPlannerBtnFnc() {
         showPlannerBtn.style.display = 'inline-block';
-        startTrainingBtn.innerText = 'Start';        
-        startTrainingBtn.removeEventListener('click', pause);
-        startTrainingBtn.addEventListener('click', startTraining);
-        clearInterval(intervalId);
-        clearInterval(mainClock);
+        startWorkoutBtn.innerText = 'Start';
+        startWorkoutBtn.removeEventListener('click', pause);
+        startWorkoutBtn.addEventListener('click', startWorkout);
     }
-
-    //training function (runs each 100ms) counts training time, moves time pointer
-    function trainingFunction () {
-        currentTime++;
-        if (timeUnit === 'seconds') {
-            mulipliedCurrentPosition++;
-            mulipliedCurrentPosition++;
-            mulipliedCurrentPosition++;
-        } else if (timeUnit === 'minutes') {
-            mulipliedCurrentPosition++;
-        }
-        currentPosition = mulipliedCurrentPosition / (timelineWidth * 10) * 100;        
-        currentPositionLine.style.left = currentPosition +'%';        
-        timeLeftDisplay.innerText = 'Time left ' + getFormatedTimeLeft(currentTime, trainingTime);
-        if (currentTime === trainingTime * 10 ) { // when training is finished
-            clearInterval(intervalId);
-            trainingTimeDisplay.innerText = 'Training time ' + getFormattedTime(trainingTime) + ' The End';
-            currentTime = 0;
-            showPlannerBtn.style.display = 'inline-block';
-            startTrainingBtn.innerText = 'Start';
-            startTrainingBtn.removeEventListener('click', pause);
-            startTrainingBtn.addEventListener('click', startTraining);
-        }
-    }
-
-    //main clock
-    function mainClockStart() {
-        mainClock = setInterval(()=> {
-            trainingTimeDisplay.innerText = 'Training time ' + getFormattedTime(mainClockTime);
-            mainClockTime++;
-            if(mainClockTime === trainingTime + 1) {
-                clearInterval(mainClock)
-            }            
-        }, 1000)
-    }
-    
-
-    //function displays exercises names, durations, exercises time etc
-    function displayExercisesDetails () {
-        exercisesStartingTimes.forEach((element, index) =>  {
-            setTimeout(()=> {
-                //show exercise name if exists
-                if (training[0].exerciseName === '') {
-                    exerciseName.innerText = "Exercise #" + (index + 1);
-                } else {
-                    exerciseName.innerText = training[index].exerciseName;
-                }
-                //show exercise limits
-                
-                timeUnit = training[index].durationUnit; //set timeUnit for time pointer to recognize difference between intervals units
-
-                if (training[index].durationUnit === 'minutes') { //count down to next exercise
-                    //actual exercise time
-                    let currentExeTime = 0;
-                    let exeDuration = training[index].duration;
-                    let exerciseTimer = setInterval(()=> {
-                        currentExeTime++;                        
-                        currentExerciseTime.innerText = getFormatedTrainingTimeFromMs(currentExeTime);
-                        setTimeout(()=> {
-                            clearInterval(exerciseTimer);
-                        }, exeDuration*60000 + 1)                        
-                    }, 100);                    
-                    //count down
-
-                    //last 5 seconds
-                    let secondsLeft = 5;
-                    let countDown5sec;
-                    setTimeout(() => {
-                            countDown5sec = setInterval(()=> {
-                            commingNext.innerText = secondsLeft;
-                            secondsLeft--;
-                        }, 1000)
-                    }, training[index].duration * 60000 - 6000);
-                    setTimeout(()=> {
-                        clearInterval(countDown5sec);
-                    }, training[index].duration * 60000 + 1)
-                } else if (training[index].durationUnit === 'seconds' && training[index].duration > 6) { //Count Down to next exercise
-                    let secondsLeft = 5;
-                    let countDown5sec                    
-                    let countDown = setTimeout(() => {
-                            countDown5sec = setInterval(()=> {
-                            commingNext.innerText = secondsLeft;
-                            secondsLeft--;
-                        }, 1000)
-                    }, training[index].duration * 1000 - 6000);
-                    let countDown2 = setTimeout(()=> {
-                        clearInterval(countDown5sec);
-                    }, training[index].duration * 1000 + 1)
-                }       
-            }, element*1000)
-        })
-    }
-
-    //remove exercise
-    function removeExercise(e) {
-        e.preventDefault();
-        const formToRemove = document.querySelector('form[data-id="' + e.target.dataset.id +'"]');
-        exercisesContainer.removeChild(formToRemove);
-        trainingTime -= training[exercisesForms.indexOf(formToRemove)].duration; //reduce training time
-        training.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise object
-        exercisesTimelines.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise timeline div from array
-        exercisesForms.splice(exercisesForms.indexOf(formToRemove), 1); //remove exercise form
-        const exerciseTimelineToRemove = exercisesTimeline.querySelector('#exeTimeline' + e.target.dataset.id);
-        exercisesTimeline.removeChild(exerciseTimelineToRemove); //remove exercise timeline        
-        renderExercisesTimelines();                       
-    }
-
-    //readForm function
-    function readForm(e) {  
-        const exerciseIndex = exercisesForms.indexOf(this);      
-        if (e.target.name === 'duration' || e.target.name === 'id' ||
-        e.target.name === 'lowerLimit' || e.target.name === 'upperLimit' ||
-        e.target.name === 'lowerCadenceLimit' || e.target.name === 'upperCadenceLimit') {
-            training[exerciseIndex][e.target.name] = parseInt(e.target.value);                        
-        } else {
-            training[exerciseIndex][e.target.name] = e.target.value;
-        }
-        if (e.target.name === 'upperLimit' && e.target.value < training[exerciseIndex]['lowerLimit']) {
-            alert('Upper limit cannot be lower than lower limit!');
-            this.lowerLimit.value = 0;
-            training[exerciseIndex]['lowerLimit'] = 0;
-        }
-        if (e.target.name === 'upperCadenceLimit' && e.target.value < training[exerciseIndex]['lowerCadenceLimit']) {
-            alert('Upper limit cannot be lower than lower limit!');
-            this.lowerCadenceLimit.value = 0;
-            training[exerciseIndex]['lowerCadenceLimit'] = 0;
-        }
-        if (e.target.name === 'upperLimit' && limitType === 'hrMax' && e.target.value > hrMax) {
-            alert('You cannot go above your HrMax!');
-            e.target.value = hrMax;
-            training[exerciseIndex]["upperLimit"] = hrMax;
-        }
-        if (e.target.name === 'lowerLimit' && e.target.value > training[exerciseIndex]['upperLimit']) {
-            alert('Lower limit cannot be higher than upper limit!');
-            e.target.value = 0;
-            training[exerciseIndex]['lowerLimit'] = 0;
-        }
-        if (e.target.name === 'lowerLimit' && limitType === 'hrMax' && e.target.value > hrMax) {
-            alert('You cannot go above your HrMax!');
-            e.target.value = hrMax;
-            training[exerciseIndex]["lowerLimit"] = hrMax;
-        }
-        if (e.target.name === 'lowerCadenceLimit' && e.target.value > training[exerciseIndex]['upperCadenceLimit']) {
-            alert('Lower limit cannot be higher than upper limit!');
-            e.target.value = 0;
-            training[exerciseIndex]['lowerCadenceLimit'] = 0;
-        }               
-        renderExercisesTimelines();
-    }
-
-    //add exercise timeline
-    function addExerciseTimeline(currentExerciseId) {
-        const exerciseTimeline = document.createElement('div');
-        exerciseTimeline.setAttribute('id', 'exeTimeline' + currentExerciseId);
-        exercisesTimeline.appendChild(exerciseTimeline);
-        exercisesTimelines.push(exerciseTimeline);        
-    }    
-
-    //render Exercises Timelines
-    function renderExercisesTimelines() {
-        //count training time
-        trainingTime = training.reduce(function (total, current) {
-            if (current.durationUnit === 'minutes') {
-                return total + current.duration * 60;
-            } else {
-               return total + parseInt(current.duration);
-            }            
-        }, 0)        
-        //setting divs width
-        exercisesTimelines.forEach((element, index) => {
-            let currentExerciseDuration = 0;
-            if (training[index].durationUnit === 'minutes') {
-                currentExerciseDuration = training[index].duration * 60;
-            } else {
-                currentExerciseDuration = training[index].duration * 3; //multiply for better visibility 
-            }
-            element.style.width = Math.round(currentExerciseDuration / trainingTime * 10000) / 100 + '%';    
-        })
-
-        //counting div height
-        if (limitType === 'hrMax') {   ///if limits based on hrMax
-            exercisesTimelines.forEach((element, index) => {                
-                element.style.height = Math.round(training[index].upperLimit / hrMax * 10000) / 100 + '%';
-                if (training[index].upperLimit > hrMax) {
-                    element.style.height = '100%';
-                }
-                //color divs
-                element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.6) + '%, lightgreen ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.6) + '%, lightgreen '  + Math.floor(hrMax / training[index].upperLimit * 100 * 0.7) + '%, lightyellow ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.7) + '%, lightyellow '  + Math.floor(hrMax / training[index].upperLimit * 100 * 0.8) + '%, orange ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.8) + '%, orange ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.9) + '%, red ' + Math.floor(hrMax / training[index].upperLimit * 100 * 0.9) + '%, red 100%)';
-                //when limits exist draw border                               
-                if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration > 0) {
-                    element.style.border = '1px solid black';
-                }
-            })
-        } else if (limitType === 'ftp') {   //if limits based on power
-            let exercisesTimelineHeightReferenceValue = training.reduce(function (prevValue, currentValue) {          
-                return Math.max(prevValue, currentValue.upperLimit);            
-            }, -1)            
-            //looking for max limit value        
-            //setting divs height and bacground color
-            exercisesTimelines.forEach((element, index) => {            
-                element.style.height = Math.round(training[index].upperLimit / exercisesTimelineHeightReferenceValue * 10000) / 100 + '%';
-                //pick bgcolor corresponding to training zone            
-                if (ftp > 1) {   ///if user defined his ftp we color the divs
-                    element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.55) + '%, lightgreen '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.75) + '%, lightyellow '  + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 0.9) + '%, orange ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05 ) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.05) + '%, pink ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.2) + '%, red ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 100 * 1.5) + '%, purple ' + Math.floor(ftp / training[index].upperLimit * 1000) + '%)';
-                } else {                
-                    element.style.backgroundImage = 'linear-gradient(to top, lightblue 0%, lightblue ' + Math.floor(training[index].lowerLimit / training[index].upperLimit * 100) + '%, grey ' + Math.floor(training[index].lowerLimit / training[index].upperLimit * 100) + '%, grey 100%)';
-                }            
-                 //when limits exist draw border
-                if (training[index].lowerLimit >= 0 && training[index].upperLimit > 0 && training[index].duration) {
-                element.style.border = '1px solid black'; 
-                }                        
-            })
-        }      
-    }
-
-    
-    
 })
