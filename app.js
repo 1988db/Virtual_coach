@@ -501,10 +501,20 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
 
     function displayTime() {
+        //timers
         workoutTimeSpan.innerText = 'Workout time: ';
         workoutTimeDisplay.innerText = workoutCurrentTime;
         currentExerciseTimeSpan.innerText = 'Exercise time: ';
         currentExerciseTimeDisplay.innerText = exerciseCurrentTime;
+        //countdowns
+        workoutTimeLeftSpan.innerText = 'Time left: ';
+        timeLeftDisplay.innerText = workoutDuration - workoutCurrentTime;
+        exerciseTimeLeftSpan.innerText = "Time left: ";        
+        if (workout[exerciseInProgressIndex].durationUnit === "minutes") {
+            exerciseTimeLeftDisplay.innerText = workout[exerciseInProgressIndex].duration*60 - exerciseCurrentTime;
+        } else if (workout[exerciseInProgressIndex].durationUnit === "seconds") {
+            exerciseTimeLeftDisplay.innerText = workout[exerciseInProgressIndex].duration - exerciseCurrentTime;
+        }
     }
 
     function showPlanner () {
