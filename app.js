@@ -9,10 +9,15 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesGeneratorContainer = document.getElementById('exercises-generator-container');
     const exercisesTimelineContainer = document.getElementById('timeline-container');
     const workoutInProgressContainer = document.getElementById('workout-in-progress-container');
+    const workoutTimeSpan = document.getElementById('workout-time');
     const workoutTimeDisplay = document.getElementById('main-timer');
-    const timeLeftDisplay = document.getElementById('main-countdown')
+    const workoutTimeLeftSpan = document.getElementById('workout-time-left');
+    const timeLeftDisplay = document.getElementById('main-countdown');    
     const exerciseName = document.getElementById('exe-name');
-    const currentExerciseTimeDisplay = document.getElementById('current-exe-time');    
+    const currentExerciseTimeSpan = document.getElementById('current-exe-time');
+    const currentExerciseTimeDisplay = document.getElementById('current-exe-timer');
+    const exerciseTimeLeftSpan = document.getElementById('current-exe-time-left');
+    const exerciseTimeLeftDisplay = document.getElementById('current-exe-countdown');    
     const commingNext = document.getElementById('comming-next');
     const clonedExercisesTimelineContainer = document.getElementById('seventh-row');
     let currentExerciseId = 0;
@@ -460,14 +465,15 @@ document.addEventListener('DOMContentLoaded', ()=> {
         //display next exercise
         if (workout[exerciseInProgressIndex + 1]) {
             commingNext.innerText = workout[exerciseInProgressIndex + 1].exerciseName;
+        }
+        if (exerciseInProgressIndex === workout.length -1) {
+            commingNext.innerText = '';
         }                 
     }
 
     //functions responsible for updating and displaying workout time
     function runTimers() {          
-        //check which exercise is currently in progress
-        console.log(exerciseInProgressIndex);
-        console.log(exercisesStartingTimes);
+        //check which exercise is currently in progress        
         if (workout.length > 1) {
             for (let i = 0; i < workout.length -1; i++) {                
                 if (workoutCurrentTime +1 >= exercisesStartingTimes[i] && workoutCurrentTime < exercisesStartingTimes[i +1]) {
@@ -485,8 +491,20 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }              
         workoutCurrentTime++;
         exerciseCurrentTime++;
-        workoutTimeDisplay.innerText = workoutCurrentTime + ' workout Time';
-        currentExerciseTimeDisplay.innerText = exerciseCurrentTime + ' current EXE';
+        displayTime();
+        if (workoutCurrentTime === workoutDuration) {
+            clearInterval(intervalId);
+            startWorkoutBtn.removeEventListener('click', pause);
+            startWorkoutBtn.innerText = 'Reload';
+            startWorkoutBtn.addEventListener('click', reload); //reload page after workout
+        }
+    }
+
+    function displayTime() {
+        workoutTimeSpan.innerText = 'Workout time: ';
+        workoutTimeDisplay.innerText = workoutCurrentTime;
+        currentExerciseTimeSpan.innerText = 'Exercise time: ';
+        currentExerciseTimeDisplay.innerText = exerciseCurrentTime;
     }
 
     function showPlanner () {
@@ -524,5 +542,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
         startWorkoutBtn.innerText = 'Start';
         startWorkoutBtn.removeEventListener('click', pause);
         startWorkoutBtn.addEventListener('click', startWorkout);
+    }
+
+    //function reloads page after workout
+    function reload() {
+        window.location.reload(false);
     }
 })
