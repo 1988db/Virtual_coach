@@ -11,19 +11,27 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const workoutInProgressContainer = document.getElementById('workout-in-progress-container');
     const workoutTimeSpan = document.getElementById('workout-time');
     const workoutTimeDisplay = document.getElementById('main-timer');
-    const workoutTimeLeftSpan = document.getElementById('workout-time-left');
+    const workoutTimeLeftSpan = document.getElementById('workout-countdown');
     const timeLeftDisplay = document.getElementById('main-countdown');    
-    const exerciseName = document.getElementById('exe-name');
+    const exerciseName = document.getElementById('current-exe-name');
     const currentExerciseTimeSpan = document.getElementById('current-exe-time');
     const currentExerciseTimeDisplay = document.getElementById('current-exe-timer');
     const exerciseTimeLeftSpan = document.getElementById('current-exe-time-left');
-    const exerciseTimeLeftDisplay = document.getElementById('current-exe-countdown');    
+    const exerciseTimeLeftDisplay = document.getElementById('current-exe-countdown');
+    const exercisePowerZonesDisplay = document.getElementById('current-exe-zones');
+    const exerciseCadenceZonesDisplay = document.getElementById('current-exe-cadence-zones');
+    const exercisesNotesDisplay = document.getElementById('current-exe-notes');
+    const nextExeDurationDislay = document.getElementById('next-exe-time');
+    const nextExePowerZonesDisplay = document.getElementById('next-exe-zones');
+    const nextExeCadenceZonesDisplay = document.getElementById('next-exe-cadence-zones');
+    const nextExeNotesDisplay = document.getElementById('next-exe-notes')  ; 
     const commingNext = document.getElementById('comming-next');
-    const clonedExercisesTimelineContainer = document.getElementById('seventh-row');
+    const clonedExercisesTimelineContainer = document.getElementById('sixth-row');
     let currentExerciseId = 0;
     let ftp = 0;
     let hrMax = 185;
     let limitType = 'ftp';
+    let zonesUnit = 'W';
     let workoutDuration = 0;
     let workoutCurrentTime = 0;
     let exerciseCurrentTime = 0;       
@@ -61,6 +69,11 @@ document.addEventListener('DOMContentLoaded', ()=> {
             hrMax = e.target.value;
         }        
         limitType = zonesTypeForm.chosenZonesType.value;
+        if (zonesTypeForm.chosenZonesType.value === 'ftp') {
+            zonesUnit = 'W';
+        } else if (zonesTypeForm.chosenZonesType.value === 'hrMax') {
+            zonesUnit = 'BPM';
+        }
         if (zonesTypeForm.doNotKnowMyHrMax.checked) {
             ageInput.style.display = 'flex';
         } else {
@@ -288,7 +301,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const notesInput = document.createElement('input');
         notesInput.setAttribute('name', 'notes');        
         notesInput.setAttribute('type', 'text');
-        notesInput.setAttribute('id', 'notes' + currentExerciseId);        
+        notesInput.setAttribute('id', 'notes' + currentExerciseId);
+        notesInput.setAttribute('maxlength', '20');        
         notesInput.classList.add('number-input');
         notesInputContainer.appendChild(notesInput);
         //add readForm function
@@ -460,15 +474,63 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //function displays exercises names, durations, exercises time etc
     function displayExercisesDetails() {
-        //display current exercise
-        exerciseName.innerText = workout[exerciseInProgressIndex].exerciseName;        
+        //display current exercise name
+        if (workout[exerciseInProgressIndex].exerciseName) {
+            exerciseName.style.display = 'inline-block';
+            exerciseName.innerText = workout[exerciseInProgressIndex].exerciseName;
+        } else {
+            exerciseName.style.display = 'none';
+        }
+        //display exercise zones
+        exercisePowerZonesDisplay.innerText = workout[exerciseInProgressIndex].lowerLimit + ' -' + workout[exerciseInProgressIndex].upperLimit + ' ' + zonesUnit;
+        //display cadence zones
+        if (workout[exerciseInProgressIndex].lowerCadenceLimit) {
+            exerciseCadenceZonesDisplay.style.display = 'inline-block';
+            exerciseCadenceZonesDisplay.innerText = workout[exerciseInProgressIndex].lowerCadenceLimit + ' -' + workout[exerciseInProgressIndex].upperCadenceLimit + ' RPM';
+        } else {
+            exerciseCadenceZonesDisplay.style.display = 'none';
+        }
+        //display notes
+        if (workout[exerciseInProgressIndex].notes) {
+            exercisesNotesDisplay.style.display = 'inline-block';
+            exercisesNotesDisplay.innerText = workout[exerciseInProgressIndex].notes;
+        } else {
+            exercisesNotesDisplay.style.display = 'none';
+        }
         //display next exercise
         if (workout[exerciseInProgressIndex + 1]) {
-            commingNext.innerText = workout[exerciseInProgressIndex + 1].exerciseName;
+            commingNext.innerText = 'next:';
         }
         if (exerciseInProgressIndex === workout.length -1) {
-            commingNext.innerText = '';
-        }                 
+            commingNext.style.visibility = 'hidden';
+        }
+        //display next exercise duration
+        if (workout[exerciseInProgressIndex + 1]) {
+            nextExeDurationDislay.style.display = 'inline-block';
+            nextExeDurationDislay.innerText = workout[exerciseInProgressIndex + 1].duration;
+        } else {
+            nextExeDurationDislay.style.display = 'none';
+        }
+        //display next exercise zones
+        if (workout[exerciseInProgressIndex + 1]) {
+            nextExePowerZonesDisplay.innerText = workout[exerciseInProgressIndex + 1].lowerLimit + ' - ' + workout[exerciseInProgressIndex + 1].upperLimit + ' ' + zonesUnit;
+        } else {
+            nextExePowerZonesDisplay.style.display = 'none';
+        }       
+        //display next exe cadence zones
+        if (workout[exerciseInProgressIndex + 1] && workout[exerciseInProgressIndex + 1].lowerCadenceLimit) {
+            nextExeCadenceZonesDisplay.style.display = 'inline-block';
+            nextExeCadenceZonesDisplay.innerText = workout[exerciseInProgressIndex + 1].lowerCadenceLimit + ' - ' + workout[exerciseInProgressIndex + 1].upperCadenceLimit + ' RPM';
+        } else {
+            nextExeCadenceZonesDisplay.style.display = 'none';
+        }
+        //display next exe notes
+        if (workout[exerciseInProgressIndex + 1] && workout[exerciseInProgressIndex + 1].notes) {
+            nextExeNotesDisplay.style.display = 'inline-block';
+            nextExeNotesDisplay.innerText = workout[exerciseInProgressIndex + 1].notes;
+        } else {
+            nextExeNotesDisplay.style.display = 'none';
+        } 
     }
 
     //functions responsible for updating and displaying workout time

@@ -185,9 +185,20 @@ input[name=notes] {
     flex-direction: column;
 }
 
-.first-row {
+.first-row, .second-row, .third-row, .fourth-row, .fifth-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    font-size: 12px;    
+}
+
+.second-row, .third-row {
+    font-size: 16px;
+}
+
+h2 {
+    margin: 5px 30px;
+    width: 30%;
+    text-align: center;
 }
 
 .seventh-row {
@@ -195,6 +206,6 @@ input[name=notes] {
     width: 100%;
 }
 
-.workout-duration {
-    width: 30%;
+.current-exe-name, .current-exe-cadence-zones, .current-exe-notes {
+    display: none;
 }
