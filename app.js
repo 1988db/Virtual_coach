@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesForms = [];
     const exercisesTimelinesArr = [];    
     const clonedExercisesTimelineArr = [];   
-    const exercisesStartingTimes = [];       
+    let exercisesStartingTimes = [];       
     let intervalId;
     let exerciseInProgressIndex = 0;    
      
@@ -428,12 +428,23 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 workoutInProgressContainer.style.opacity = '0';
                 setTimeout(()=> workoutInProgressContainer.style.opacity = '1', 999);
                 //clone exercises timeline from planner
-                cloneWorkoutTimeline()                        
+                cloneWorkoutTimeline();                        
                 //exercises starting times
-                setExercisesStartingTimes()                
+                setExercisesStartingTimes();                
         } else {
             alert('At least one exercise must be chosen and exercise duration, lower limit and upper limit must be higher than 0');
         }
+    }
+
+    //show planner function
+    function showPlanner () {
+        clonedExercisesTimelineContainer.removeChild(clonedExercisesTimelineArr[0]);
+        clonedExercisesTimelineArr.pop();
+        showPlannerBtn.style.display = 'none';
+        startWorkoutBtn.style.display = 'none';
+        workoutInProgressContainer.style.display = 'none';
+        plannerContainer.style.display = 'flex';
+        plannerContainer.style.opacity = '1';
     }
 
     //clone workout timeline function
@@ -446,6 +457,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //set exercises starting times function
     function setExercisesStartingTimes() {
+        exercisesStartingTimes = [];
         let startingTime = 0;
         for (let i = 1; i <= workout.length; i++) {                
             exercisesStartingTimes.push(startingTime);
@@ -577,11 +589,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         } else if (workout[exerciseInProgressIndex].durationUnit === "seconds") {
             exerciseTimeLeftDisplay.innerText = workout[exerciseInProgressIndex].duration - exerciseCurrentTime;
         }
-    }
-
-    function showPlanner () {
-
-    }
+    }    
 
     //exercise template
     class Exercise {
@@ -598,8 +606,18 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }
     }
 
-    function removeExercise() {
-
+    //function removes exercise
+    function removeExercise(e) {
+        e.preventDefault();        
+        const thisForm = exercisesForms.filter(element => element.dataset.id === this.dataset.id)[0];
+        const thisFormIndex = exercisesForms.indexOf(thisForm);
+        console.log(thisFormIndex)        
+        exercisesGeneratorContainer.removeChild(thisForm);
+        workout.splice(thisFormIndex, 1);
+        exercisesTimelineContainer.removeChild(exercisesTimelinesArr[thisFormIndex]);
+        exercisesTimelinesArr.splice(thisFormIndex, 1);       
+        exercisesForms.splice(thisFormIndex, 1);
+        renderExercisesTimelines();        
     }
 
     //pause workout function
