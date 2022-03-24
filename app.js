@@ -471,7 +471,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //start workout
     function startWorkout() {               
-        hidePlannerBtnFnc()
+        hidePlannerBtnFnc();
+        checkExerciseInProgress();
         displayExercisesDetails();
         intervalId = setInterval(runTimers, 1000);
     }
@@ -545,9 +546,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
         } 
     }
 
-    //functions responsible for updating and displaying workout time
-    function runTimers() {          
-        //check which exercise is currently in progress        
+    //function checking which exercise is in progress
+    function checkExerciseInProgress() {
         if (workout.length > 1) {
             for (let i = 0; i < workout.length -1; i++) {                
                 if (workoutCurrentTime +1 >= exercisesStartingTimes[i] && workoutCurrentTime < exercisesStartingTimes[i +1]) {
@@ -558,6 +558,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
         if (workoutCurrentTime +1 >= exercisesStartingTimes[workout.length -1]) {
             exerciseInProgressIndex = workout.length - 1;
         }
+    }
+    
+    //functions responsible for updating and displaying workout time
+    function runTimers() {          
+        //check which exercise is currently in progress        
+        checkExerciseInProgress();
         //when new exercise starts
         if (workoutCurrentTime > 1 && exercisesStartingTimes.includes(workoutCurrentTime + 1)) {
             exerciseCurrentTime = -1;
@@ -566,6 +572,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         workoutCurrentTime++;
         exerciseCurrentTime++;
         displayTime();
+        //stop when workout is finished
         if (workoutCurrentTime === workoutDuration) {
             clearInterval(intervalId);
             startWorkoutBtn.removeEventListener('click', pause);
