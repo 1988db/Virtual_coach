@@ -584,19 +584,35 @@ document.addEventListener('DOMContentLoaded', ()=> {
     function displayTime() {
         //timers
         workoutTimeSpan.innerText = 'Workout time: ';
-        workoutTimeDisplay.innerText = workoutCurrentTime;
+        workoutTimeDisplay.innerText = getFormattedTime(workoutCurrentTime);
         currentExerciseTimeSpan.innerText = 'Exercise time: ';
-        currentExerciseTimeDisplay.innerText = exerciseCurrentTime;
+        currentExerciseTimeDisplay.innerText = getFormattedTime(exerciseCurrentTime);
         //countdowns
         workoutTimeLeftSpan.innerText = 'Time left: ';
-        timeLeftDisplay.innerText = workoutDuration - workoutCurrentTime;
+        timeLeftDisplay.innerText = getFormattedTime(workoutDuration - workoutCurrentTime);
         exerciseTimeLeftSpan.innerText = "Time left: ";        
         if (workout[exerciseInProgressIndex].durationUnit === "minutes") {
-            exerciseTimeLeftDisplay.innerText = workout[exerciseInProgressIndex].duration*60 - exerciseCurrentTime;
+            exerciseTimeLeftDisplay.innerText = getFormattedTime(workout[exerciseInProgressIndex].duration*60 - exerciseCurrentTime);
         } else if (workout[exerciseInProgressIndex].durationUnit === "seconds") {
-            exerciseTimeLeftDisplay.innerText = workout[exerciseInProgressIndex].duration - exerciseCurrentTime;
+            exerciseTimeLeftDisplay.innerText = getFormattedTime(workout[exerciseInProgressIndex].duration - exerciseCurrentTime);
         }
-    }    
+    }
+    
+    function getFormattedTime(time) {
+        let hours = Math.floor(time/3600);
+        let minutes = Math.floor(time % 3600 / 60);
+        let seconds = time % 60;
+        if (hours < 10) {
+            hours = '0' + hours;
+        }
+        if (minutes < 10) {
+            minutes = '0' + minutes;
+        }
+        if (seconds < 10) {
+            seconds = '0' + seconds;
+        }
+        return hours + ' : ' + minutes + ' : ' + seconds;
+    }
 
     //exercise template
     class Exercise {
@@ -617,8 +633,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     function removeExercise(e) {
         e.preventDefault();        
         const thisForm = exercisesForms.filter(element => element.dataset.id === this.dataset.id)[0];
-        const thisFormIndex = exercisesForms.indexOf(thisForm);
-        console.log(thisFormIndex)        
+        const thisFormIndex = exercisesForms.indexOf(thisForm);                
         exercisesGeneratorContainer.removeChild(thisForm);
         workout.splice(thisFormIndex, 1);
         exercisesTimelineContainer.removeChild(exercisesTimelinesArr[thisFormIndex]);
