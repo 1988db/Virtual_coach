@@ -34,13 +34,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
     let zonesUnit = 'W';
     let workoutDuration = 0;
     let workoutCurrentTime = 0;
-    let exerciseCurrentTime = 0;       
+    let exerciseCurrentTime = 0;
+    let currentExerciseTimeUnit;       
     let clonedExerciesTimeline;      
     const workout = [];
     const exercisesForms = [];
     const exercisesTimelinesArr = [];    
     const clonedExercisesTimelineArr = [];   
-    let exercisesStartingTimes = [];       
+    let exercisesStartingTimes = [];
+    let timePointerArr = [];    
+    let timePointerPosition = 0;       
     let intervalId;
     let exerciseInProgressIndex = 0;    
      
@@ -356,6 +359,15 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //render Exercises Timelines
     function renderExercisesTimelines() {
+        //if timePointer does exist - remove it, if not create
+        if (timePointerArr.length > 0) {
+            exercisesTimelineContainer.removeChild(timePointerArr[0]);
+            timePointerArr.pop();
+        } 
+        let timePointer = document.createElement('div');
+        timePointer.classList.add('time-pointer');
+        exercisesTimelineContainer.appendChild(timePointer);
+        timePointerArr.push(timePointer);        
         //count workout time
         workoutDuration = workout.reduce(function (total, current) {
             if (current.durationUnit === 'minutes') {
@@ -452,7 +464,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         clonedExerciesTimeline = exercisesTimelineContainer.cloneNode(true);                         
         clonedExercisesTimelineContainer.appendChild(clonedExerciesTimeline);
         clonedExercisesTimelineArr.push(clonedExerciesTimeline);               
-        workoutTimeDisplay.innerText = "workout duration " + workoutDuration; 
+        workoutTimeDisplay.innerText = "workout duration " + getFormattedTime(workoutDuration); 
     }
 
     //set exercises starting times function
@@ -473,7 +485,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     function startWorkout() {               
         hidePlannerBtnFnc();
         checkExerciseInProgress();
-        displayExercisesDetails();
+        displayExercisesDetails();        
         intervalId = setInterval(runTimers, 1000);
     }
 
@@ -520,7 +532,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         //display next exercise duration
         if (workout[exerciseInProgressIndex + 1]) {
             nextExeDurationDislay.style.display = 'inline-block';
-            nextExeDurationDislay.innerText = workout[exerciseInProgressIndex + 1].duration;
+            nextExeDurationDislay.innerText = 'Exercise duration: ' + getFormattedTime(workout[exerciseInProgressIndex + 1].duration);
         } else {
             nextExeDurationDislay.style.display = 'none';
         }
@@ -561,16 +573,19 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
     
     //functions responsible for updating and displaying workout time
-    function runTimers() {          
+    function runTimers() {
+        //move timePointer
+        moveTimePointer()          
         //check which exercise is currently in progress        
         checkExerciseInProgress();
         //when new exercise starts
         if (workoutCurrentTime > 1 && exercisesStartingTimes.includes(workoutCurrentTime + 1)) {
             exerciseCurrentTime = -1;
             displayExercisesDetails();
-        }              
+        };                      
         workoutCurrentTime++;
-        exerciseCurrentTime++;
+        exerciseCurrentTime++;        
+        //display time and time left
         displayTime();
         //stop when workout is finished
         if (workoutCurrentTime === workoutDuration) {
@@ -581,6 +596,29 @@ document.addEventListener('DOMContentLoaded', ()=> {
         }
     }
 
+    //function moves timePointer
+    function moveTimePointer() {
+        let workoutTimeLineWidth = workout.reduce((total, current) => {
+            if(current.durationUnit === 'seconds') {
+                return total += current.duration * 3
+            } else if (current.durationUnit === 'minutes') {
+                return total += current.duration * 60;
+            }
+        }, 0);
+        if (timePointerPosition/workoutTimeLineWidth != workoutCurrentTime/workoutDuration) {
+            timePointerPosition = workoutCurrentTime/workoutDuration * workoutTimeLineWidth;
+        }       
+        if (workout[exerciseInProgressIndex].durationUnit === 'minutes') {
+            timePointerPosition++;
+        } else if (workout[exerciseInProgressIndex].durationUnit === 'seconds') {
+            timePointerPosition += 3;
+        }
+        const timePointer = document.querySelectorAll('.time-pointer');
+        timePointer[0].style.left = timePointerPosition/workoutTimeLineWidth * 100 + '%';
+        timePointer[1].style.left = timePointerPosition/workoutTimeLineWidth * 100 + '%';
+    }
+
+    //function displays time and time left
     function displayTime() {
         //timers
         workoutTimeSpan.innerText = 'Workout time: ';
