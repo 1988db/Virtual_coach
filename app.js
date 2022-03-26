@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const exercisesTimelinesArr = [];    
     const clonedExercisesTimelineArr = [];   
     let exercisesStartingTimes = [];
+    let timePointers;
     let timePointerArr = [];    
     let timePointerPosition = 0;       
     let intervalId;
@@ -365,9 +366,19 @@ document.addEventListener('DOMContentLoaded', ()=> {
             timePointerArr.pop();
         } 
         let timePointer = document.createElement('div');
-        timePointer.classList.add('time-pointer');
+        timePointer.classList.add('time-pointer');        
         exercisesTimelineContainer.appendChild(timePointer);
-        timePointerArr.push(timePointer);        
+        timePointerArr.push(timePointer);
+        timePointers = document.querySelectorAll('.time-pointer');
+        //move time pointer
+        checkTimePointerPosition();
+        //we have to move time Pointer back as there is no time increase during rendering
+        if (workout[exerciseInProgressIndex].durationUnit === 'seconds') {
+            timePointerPosition -= 3;
+        } else if (workout[exerciseInProgressIndex].durationUnit === 'minutes') {
+            timePointerPosition -= 1;
+        }
+        moveTimePointer();                     
         //count workout time
         workoutDuration = workout.reduce(function (total, current) {
             if (current.durationUnit === 'minutes') {
@@ -482,8 +493,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
 
     //start workout
-    function startWorkout() {               
-        hidePlannerBtnFnc();
+    function startWorkout() {                       
+        hidePlannerBtnFnc();        
         checkExerciseInProgress();
         displayExercisesDetails();        
         intervalId = setInterval(runTimers, 1000);
@@ -598,24 +609,40 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //function moves timePointer
     function moveTimePointer() {
+        timePointers = document.querySelectorAll('.time-pointer'); //if timelines was
+        //cloned there are two TimePointers so we need to update our NodeList
         let workoutTimeLineWidth = workout.reduce((total, current) => {
             if(current.durationUnit === 'seconds') {
                 return total += current.duration * 3
             } else if (current.durationUnit === 'minutes') {
                 return total += current.duration * 60;
             }
-        }, 0);
-        if (timePointerPosition/workoutTimeLineWidth != workoutCurrentTime/workoutDuration) {
-            timePointerPosition = workoutCurrentTime/workoutDuration * workoutTimeLineWidth;
-        }       
+        }, 0);              
         if (workout[exerciseInProgressIndex].durationUnit === 'minutes') {
             timePointerPosition++;
         } else if (workout[exerciseInProgressIndex].durationUnit === 'seconds') {
             timePointerPosition += 3;
+        }        
+        timePointers[0].style.left = timePointerPosition/workoutTimeLineWidth * 100 + '%';
+        if (timePointers[1]) {
+            timePointers[1].style.left = timePointerPosition/workoutTimeLineWidth * 100 + '%';
         }
-        const timePointer = document.querySelectorAll('.time-pointer');
-        timePointer[0].style.left = timePointerPosition/workoutTimeLineWidth * 100 + '%';
-        timePointer[1].style.left = timePointerPosition/workoutTimeLineWidth * 100 + '%';
+        
+    }
+
+    //if we change exercises during training we must check if pointer position has changed
+    function checkTimePointerPosition() {
+        let newTimePointerPosition = 0;
+        let sumOfDoneExercisesDurations = 0;        
+        if (exerciseInProgressIndex === 0) {
+            if (workout[0].durationUnit === 'minutes') {
+                timePointerPosition = workoutCurrentTime;
+            }
+            if (workout[0].durationUnit === 'seconds') {
+                timePointerPosition = workoutCurrentTime*3;
+            }
+        }
+        console.log(timePointerPosition)       
     }
 
     //function displays time and time left
