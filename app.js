@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         workout.push(exercise);
         addExerciseTimeline(currentExerciseId); //add exercise Timeline        
         addExerciseForm(currentExerciseId); //adds exercise from        
-        currentExerciseId++;             
+        currentExerciseId++;                     
     }
 
     //add exercise timeline
@@ -316,8 +316,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
 
     //readForm function
-    function readForm(e) {  
-        const exerciseIndex = exercisesForms.indexOf(this);      
+    function readForm(e) {          
+        const exerciseIndex = exercisesForms.indexOf(this);
+        if ((workoutCurrentTime > 0 && exerciseIndex === exerciseInProgressIndex && this.durationUnit.value === 'seconds' && this.duration.value < exerciseCurrentTime)
+            ||
+            (workoutCurrentTime > 0 && exerciseIndex === exerciseInProgressIndex && this.durationUnit.value === 'minutes' && this.duration.value*60 < exerciseCurrentTime)
+        ) {
+            alert('You cannot travel in time!');
+            workout[exerciseIndex].duration = parseInt(exerciseCurrentTime + 10);
+            this.duration.value = exerciseCurrentTime + 10;
+        }  
         if (e.target.name === 'duration' || e.target.name === 'id' ||
         e.target.name === 'lowerLimit' || e.target.name === 'upperLimit' ||
         e.target.name === 'lowerCadenceLimit' || e.target.name === 'upperCadenceLimit') {
@@ -325,6 +333,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         } else {
             workout[exerciseIndex][e.target.name] = e.target.value;
         }
+        
         if (e.target.name === 'upperLimit' && e.target.value < workout[exerciseIndex]['lowerLimit']) {
             alert('Upper limit cannot be lower than lower limit!');
             this.lowerLimit.value = 0;
@@ -371,14 +380,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
         timePointerArr.push(timePointer);
         timePointers = document.querySelectorAll('.time-pointer');
         //move time pointer
-        checkTimePointerPosition();
-        //we have to move time Pointer back as there is no time increase during rendering
-        if (workout[exerciseInProgressIndex].durationUnit === 'seconds') {
-            timePointerPosition -= 3;
-        } else if (workout[exerciseInProgressIndex].durationUnit === 'minutes') {
-            timePointerPosition -= 1;
-        }
-        moveTimePointer();                     
+        if (workout.length > 0) {
+            checkTimePointerPosition();
+            //we have to move time Pointer back as there is no time increase during rendering
+            if (workout[exerciseInProgressIndex].durationUnit === 'seconds') {
+                timePointerPosition -= 3;
+            } else if (workout[exerciseInProgressIndex].durationUnit === 'minutes') {
+                timePointerPosition -= 1;
+            }
+            moveTimePointer();
+        }                             
         //count workout time
         workoutDuration = workout.reduce(function (total, current) {
             if (current.durationUnit === 'minutes') {
@@ -459,7 +470,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 setExercisesStartingTimes();                
         } else {
             alert('At least one exercise must be chosen and exercise duration, lower limit and upper limit must be higher than 0');
-        }
+        }        
     }
 
     //show planner function
@@ -717,15 +728,18 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
     //function removes exercise
     function removeExercise(e) {
-        e.preventDefault();        
+        e.preventDefault();               
         const thisForm = exercisesForms.filter(element => element.dataset.id === this.dataset.id)[0];
-        const thisFormIndex = exercisesForms.indexOf(thisForm);                
-        exercisesGeneratorContainer.removeChild(thisForm);
-        workout.splice(thisFormIndex, 1);
-        exercisesTimelineContainer.removeChild(exercisesTimelinesArr[thisFormIndex]);
-        exercisesTimelinesArr.splice(thisFormIndex, 1);       
-        exercisesForms.splice(thisFormIndex, 1);
-        renderExercisesTimelines();        
+        const thisFormIndex = exercisesForms.indexOf(thisForm);
+        if(thisFormIndex > exerciseInProgressIndex && workoutCurrentTime > 0 || workoutCurrentTime === 0) {
+            exercisesGeneratorContainer.removeChild(thisForm);
+            workout.splice(thisFormIndex, 1);
+            exercisesTimelineContainer.removeChild(exercisesTimelinesArr[thisFormIndex]);
+            exercisesTimelinesArr.splice(thisFormIndex, 1);       
+            exercisesForms.splice(thisFormIndex, 1);
+            renderExercisesTimelines(); 
+        }               
+               
     }
 
     //pause workout function
