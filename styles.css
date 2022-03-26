@@ -179,8 +179,7 @@ input[name=notes] {
     display: inline-block;
     position: absolute;
     height: 100%;
-    width: 3px;
-    background-color: orangered;
+    width: 3px;    
     left: 0;
 }
 

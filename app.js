@@ -427,9 +427,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 }               
             //when zones exist draw border
             if (workout[index].lowerLimit >= 0 && workout[index].upperLimit > 0 && workout[index].duration) {
-                element.style.border = '1px solid black'; 
-            }                        
+                element.style.border = '1px solid black';
+                //draw timePointer
+                timePointer.style.backgroundColor = 'orangered'; 
+                }                        
             })
+            
         }    
     }         
 
@@ -642,7 +645,25 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 timePointerPosition = workoutCurrentTime*3;
             }
         }
-        console.log(timePointerPosition)       
+        if (exerciseInProgressIndex > 0) {
+            for (let i = 0; i < workout.length; i++) {
+                if(workout[i].durationUnit === 'seconds') {
+                    newTimePointerPosition += workout[i].duration * 3;
+                    sumOfDoneExercisesDurations += workout[i].duration;
+                } else if (workout[i].durationUnit === 'minutes') {
+                    newTimePointerPosition += workout[i].duration * 60;
+                    sumOfDoneExercisesDurations += workout[i].duration * 60;
+                }
+                if (i+1 === exerciseInProgressIndex) {
+                    let inProgressExeTime = workoutCurrentTime - sumOfDoneExercisesDurations;
+                    if (workout[exerciseInProgressIndex].durationUnit === 'seconds') {
+                        timePointerPosition = newTimePointerPosition + inProgressExeTime*3;
+                    } else if (workout[exerciseInProgressIndex].durationUnit === 'minutes') {
+                        timePointerPosition = newTimePointerPosition + inProgressExeTime;
+                    }
+                }
+            }
+        }     
     }
 
     //function displays time and time left
